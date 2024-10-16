@@ -1,11 +1,30 @@
+<!--
+    rectangle-intellij-plugin
+
+    Copyright 2024 - Brice Dutheil
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at https://mozilla.org/MPL/2.0/.
+-->
+
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>org.jetbrains.plugins.template</id>
-    <name>Rectangle Actions</name>
-    <vendor>JetBrains</vendor>
+    <vendor>Brice Dutheil</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
     <resource-bundle>messages.RectangleBundle</resource-bundle>
+
+    <applicationListeners>
+        <listener class="io.github.bric3.rectangle.actions.RectangleActionsRegistraar"
+                  topic="com.intellij.ide.AppLifecycleListener" />
+        <listener class="io.github.bric3.rectangle.actions.RectangleActionsRegistraar"
+                  topic="com.intellij.ide.plugins.DynamicPluginListener" />
+    </applicationListeners>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="Rectangle" displayType="BALLOON" />
+    </extensions>
 
 </idea-plugin>
