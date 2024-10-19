@@ -29,7 +29,8 @@ enum class RectangleActionName {
   `top-left-ninth`, `top-center-ninth`, `top-right-ninth`, `middle-left-ninth`, `middle-center-ninth`, `middle-right-ninth`, `bottom-left-ninth`, `bottom-center-ninth`, `bottom-right-ninth`,
   `top-left-third`, `top-right-third`, `bottom-left-third`, `bottom-right-third`,
   `top-left-eighth`, `top-center-left-eighth`, `top-center-right-eighth`, `top-right-eighth`, `bottom-left-eighth`, `bottom-center-left-eighth`, `bottom-center-right-eighth`, `bottom-right-eighth`,
-//    `tile-all`, `cascade-all`, `cascade-active-app`
+//    `tile-all`, `cascade-all`,
+   `cascade-active-app`
   ;
 
   fun toTitleCase() = StringUtil.toTitleCase(name).replace("-", " ")

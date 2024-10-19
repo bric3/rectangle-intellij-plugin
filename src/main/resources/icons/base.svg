@@ -107,4 +107,11 @@
   <!--        c 2.325491,2.325492 2.325491,6.102091 0,8.427582 -2.325493,2.325493 -6.102092,2.325493 -8.427585,0-->
   <!--        L 50.024754,53.751281-->
   <!--        c -2.325492,-2.325493 -2.325492,-6.102091 0,-8.427583 z" fill="black"/>-->
+
+  <!-- Cascade app windows -->
+  <rect id="window-back" x="20" y="20" width="100" height="60" rx="10" fill="none" stroke="black" stroke-width="8"/>
+  <rect id="window-middle" x="36" y="36" width="100" height="60" rx="10" fill="none" stroke="black" stroke-width="8"/>
+  <rect id="window-front" x="52" y="52" width="100" height="60" rx="10" fill="black" stroke="black" stroke-width="8"/>
+
+  
 </svg>

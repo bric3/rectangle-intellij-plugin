@@ -99,6 +99,7 @@ object RectangleActionsIcons {
       /** 16x16 */ @JvmField val Larger = load("icons/general/larger.svg")
       /** 16x16 */ @JvmField val Center = load("icons/general/center.svg")
       /** 16x16 */ @JvmField val Restore = load("icons/general/restore.svg")
+      /** 16x16 */ @JvmField val CascadeActiveApp = load("icons/general/cascade-active-app.svg")
     }
   }
 }
