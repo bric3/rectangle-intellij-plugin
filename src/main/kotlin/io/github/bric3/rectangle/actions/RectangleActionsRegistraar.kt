@@ -25,7 +25,10 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.NewUI
 import io.github.bric3.rectangle.RectangleApplicationService
 import io.github.bric3.rectangle.RectangleBundle.message
+import io.github.bric3.rectangle.RectangleDetector
 import io.github.bric3.rectangle.RectanglePlugin
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.launch
 
 class RectangleActionsRegistraar : AppLifecycleListener, DynamicPluginListener {
   override fun appFrameCreated(commandLineArgs: MutableList<String>) {
@@ -46,26 +49,34 @@ class RectangleActionsRegistraar : AppLifecycleListener, DynamicPluginListener {
   }
 
   private fun createAndRegisterActions() {
-    if (!SystemInfo.isMac) {
-      RectangleApplicationService.getInstance().notifyUser(message("rectangle.failure.not-available.text"), NotificationType.ERROR)
-      return
-    }
+    RectangleApplicationService.getInstance().newChildScope()
+      .launch(CoroutineName("RectangleActionsRegistraar")) {
+        if (!SystemInfo.isMac) {
+          RectangleApplicationService.getInstance()
+            .notifyUser(message("rectangle.failure.not-available.text"), NotificationType.ERROR)
+          return@launch
+        }
 
-    val actionManager = ActionManager.getInstance()
+        if (RectangleDetector.detectRectangleVersion() == null) {
+          return@launch
+        }
 
-    if (actionManager.getActionIdList(RectangleAction.ACTION_PREFIX).isNotEmpty()) {
-      return
-    }
+        val actionManager = ActionManager.getInstance()
 
-    RectangleActionsProvider.createActions().forEach { action ->
-      actionManager.registerAction(action.id, action, RectanglePlugin.PLUGIN_ID)
-    }
+        if (actionManager.getActionIdList(RectangleAction.ACTION_PREFIX).isNotEmpty()) {
+          return@launch
+        }
+
+        RectangleActionsProvider.createActions().forEach { action ->
+          actionManager.registerAction(action.id, action, RectanglePlugin.PLUGIN_ID)
+        }
+      }
   }
 
   // TODO explore if we can use the new UI API to add a global action to the title bar ?
   private fun registerActionInTitleBar() {
     if (!NewUI.isEnabled()) return
-    
+
     try {
       val targetGroupId = MAIN_TOOLBAR_RIGHT_GROUP_ID
       val constraints = Constraints(Anchor.BEFORE, SEARCH_EVERYWHERE_ACTION_ID)

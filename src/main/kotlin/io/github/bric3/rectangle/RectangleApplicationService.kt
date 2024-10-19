@@ -14,9 +14,11 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import icons.RectangleActionsIcons
 import io.github.bric3.rectangle.RectangleBundle.message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -40,14 +42,17 @@ class RectangleApplicationService(private val pluginAppScope: CoroutineScope) : 
     return CoroutineScope(pluginAppScope.coroutineContext + newJob + context)
   }
 
-  fun notifyUser(message: String, notificationType: NotificationType) {
+  fun notifyUser(message: String, notificationType: NotificationType, vararg actions: AnAction) {
     Notifications.Bus.notify(
       Notification(
         NOTIFICATION_GROUP_ID,
         NOTIFICATION_TITLE,
         message,
         notificationType
-      )
+      ).also { notification ->
+        notification.icon = RectangleActionsIcons.Rectangle
+        actions.forEach { notification.addAction(it) }
+      }
     )
   }
 
