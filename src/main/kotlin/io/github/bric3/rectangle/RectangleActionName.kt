@@ -12,6 +12,7 @@ package io.github.bric3.rectangle
 
 import com.intellij.openapi.util.text.StringUtil
 import io.github.bric3.rectangle.RectangleBundle.message
+import io.github.bric3.rectangle.RectangleBundle.messagePointer
 
 @Suppress("EnumEntryName")
 enum class RectangleActionName {
@@ -33,5 +34,5 @@ enum class RectangleActionName {
 
   fun toTitleCase() = StringUtil.toTitleCase(name).replace("-", " ")
   fun toId() = StringUtil.toTitleCase(name).replace("-", "")
-  fun description(): String = message("rectangle.action.${name}.description")
+  fun description() = messagePointer("rectangle.action.${name}.description")
 }

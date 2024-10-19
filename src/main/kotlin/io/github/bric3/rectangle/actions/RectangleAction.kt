@@ -19,9 +19,11 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread.BGT
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
+import icons.RectangleActionsIcons
 import io.github.bric3.rectangle.RectangleActionName
 import io.github.bric3.rectangle.RectangleApplicationService
 import io.github.bric3.rectangle.RectangleBundle.message
+import io.github.bric3.rectangle.RectangleBundle.messagePointer
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.launch
 
@@ -45,7 +47,9 @@ import kotlinx.coroutines.launch
  *   * `tile-all`, `cascade-all`, `cascade-active-app`
  */
 class RectangleAction(private val rectangleActionName: RectangleActionName) : DumbAwareAction(
-  message("rectangle.action.text-with-prefix", rectangleActionName.toTitleCase())
+  messagePointer("rectangle.action.text-with-prefix", rectangleActionName.toTitleCase()),
+  rectangleActionName.description(),
+  { RectangleActionsIcons.findIcon(rectangleActionName.name) }
 ) {
   val id = "$ACTION_PREFIX.${rectangleActionName.toId()}"
 
@@ -56,11 +60,10 @@ class RectangleAction(private val rectangleActionName: RectangleActionName) : Du
   override fun getActionUpdateThread() = BGT
 
   override fun update(e: AnActionEvent) {
-    if (e.place == ActionPlaces.ACTION_SEARCH) {
-      e.presentation.text = message("rectangle.action.text-with-prefix", rectangleActionName.toTitleCase())
+    e.presentation.text = when (e.place) {
+      ActionPlaces.ACTION_SEARCH -> message("rectangle.action.text-with-prefix", rectangleActionName.toTitleCase())
+      else -> rectangleActionName.toTitleCase()
     }
-    e.presentation.text = rectangleActionName.toTitleCase()
-    e.presentation.description = rectangleActionName.description()
     e.presentation.isEnabledAndVisible = true
   }
 
