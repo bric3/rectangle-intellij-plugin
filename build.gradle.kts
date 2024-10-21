@@ -10,6 +10,7 @@
 
 import net.minecraftforge.licenser.header.HeaderFormatRegistry
 import net.minecraftforge.licenser.header.HeaderStyle.HASH
+import org.intellij.lang.annotations.Language
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.gradle.ext.settings
@@ -198,5 +199,139 @@ idea {
 //      // Tell IDE to execute task
 //      afterSync(":task")
 //    }
+  }
+}
+
+tasks.register<GenerateDarkIconVariant>("patchSVG") {
+  forceDarkSync = true
+}
+abstract class GenerateDarkIconVariant @Inject constructor(project: Project) : DefaultTask() {
+
+  @InputFiles
+  val svgFiles = project.fileTree(project.file("src/main/resources/icons")) {
+    exclude("**/rectangle.svg", "**/base.svg")
+    include("**/*.svg")
+  }
+
+  @OutputFiles
+  val patchedFiles = svgFiles + svgFiles.files.map {
+    it.parentFile.resolve(it.name.replace(".svg", "_dark.svg"))
+  }.filter {
+    it.exists()
+  }
+
+  @Input
+  val forceDarkSync = project.objects.property<Boolean>().convention(false)
+
+  // TODO ensure width rules per folder / file
+  //  - actions: 16
+  //  - filetypes: 16
+  //  - toolwindows: 13, newUI 20
+  //  - editorgutter: 12
+  //  - bookmarks: 12
+
+  @TaskAction
+  fun run() {
+    svgFiles.filter {
+      val darkVariant = it.parentFile.resolve(it.name.replace(".svg", "_dark.svg"))
+      !it.name.endsWith("_dark.svg") && (!svgFiles.contains(darkVariant) || forceDarkSync.get())
+    }.forEach { svgFile ->
+      logger.lifecycle(svgFile.path)
+      val svgContent = svgFile.bufferedReader().readText()
+
+      // Light SVG
+      patchContent(svgContent, "#6E6E6E", "black").also {
+        svgFile.parentFile.resolve("${svgFile.nameWithoutExtension}.svg").writeText(it)
+      }
+      // Dark SVG
+      patchContent(svgContent, "#AFB1B3", "white").also {
+        svgFile.parentFile.resolve("${svgFile.nameWithoutExtension}_dark.svg").writeText(it)
+      }
+    }
+  }
+
+  private fun patchContent(svgContent: String, screenColor: String, windowColor: String): String {
+    val screenShapeFillRegex = "(?s)<rect.+?id=\"(?<id>[^\"]+?)\".*?fill=\"(?<fill>[^\"]+?)\""
+    val screenShapeStrokeRegex = "(?s)<rect.+?id=\"(?<id>[^\"]+?)\".*?stroke=\"(?<stroke>[^\"]+?)\""
+    val otherShapesFillRegex =
+      "(?s)<(?<shape>rect|circle|ellipse|path|line|polyline|polygon).+?id=\"(?<id>[^\"]+?)\".*?fill=\"(?<fill>[^\"]+?)\""
+    val otherShapesStrokeRegex =
+      "(?s)<(?<shape>rect|circle|ellipse|path|line|polyline|polygon).+?id=\"(?<id>[^\"]+?)\".*?stroke=\"(?<stroke>[^\"]+?)\""
+    val buildString = buildString {
+      append(svgContent)
+      patchAllFillAttributeWith(
+        regex = screenShapeFillRegex,
+        replacement = "fill" to screenColor,
+        include = mapOf("id" to setOf("screen"))
+      )
+      patchAllFillAttributeWith(
+        regex = screenShapeStrokeRegex,
+        replacement = "stroke" to screenColor,
+        include = mapOf("id" to setOf("screen"))
+      )
+      patchAllFillAttributeWith(
+        regex = otherShapesFillRegex,
+        replacement = "fill" to windowColor,
+        include = mapOf("shape" to setOf("rect", "circle", "ellipse", "path", "line", "polyline", "polygon")),
+        exclude = mapOf(
+          "id" to setOf("screen"),
+          "fill" to setOf("none")
+        )
+      )
+      patchAllFillAttributeWith(
+        regex = otherShapesStrokeRegex,
+        replacement = "stroke" to windowColor,
+        include = mapOf("shape" to setOf("rect", "circle", "ellipse", "path", "line", "polyline", "polygon")),
+        exclude = mapOf(
+          "id" to setOf("screen"),
+          "stroke" to setOf("none")
+        )
+      )
+    }
+    return buildString
+  }
+
+  /**
+   * Stick man's SVG patcher as regular XML API (DOM, StAX) re-order attributes.
+   *
+   * XML standard allows this because attribute order is irrelevant, however,
+   * when patching a document it does because it may have been manually ordered by a human.
+   */
+  private fun StringBuilder.patchAllFillAttributeWith(
+    @Language("RegExp")
+    regex: String,
+    replacement: Pair<String, String>,
+    include: Map<String, Set<String>> = emptyMap(),
+    exclude: Map<String, Set<String>> = emptyMap(),
+  ) {
+
+    Regex(regex)
+      .findAll(this)
+      .mapNotNull {
+        val containsGroupValue: (Map.Entry<String, Set<String>>) -> Boolean = containsPredicate@{ (k, valueSet) ->
+          val group = it.groups[k] ?: return@containsPredicate false
+          valueSet.contains(group.value)
+        }
+        if (exclude.any(containsGroupValue)) {
+          return@mapNotNull null
+        }
+        if (include.none(containsGroupValue)) {
+          return@mapNotNull null
+        }
+
+        // if (exclude != null && it.groups[exclude.first]?.value == exclude.second) {
+        //   return@mapNotNull null
+        // }
+        // if (include != null && it.groups[include.first]?.value != include.second) {
+        //   return@mapNotNull null
+        // }
+        it.groups[replacement.first]
+      }
+      .toList()
+      .reversed() // THis will make replacements from last to first to avoid skewing int ranges.
+      .forEach {
+        logger.debug("match to be changed : $it")
+        replace(it.range.first, it.range.last + 1, replacement.second)
+      }
   }
 }

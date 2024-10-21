@@ -1,0 +1,23 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  rectangle-intellij-plugin
+
+  Copyright 2024 - Brice Dutheil
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at https://mozilla.org/MPL/2.0/.
+-->
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+     width="16" height="16"
+     viewBox="0 0 192 128">
+  <rect
+          id="screen"
+          stroke="#AFB1B3"
+          fill="#AFB1B3" stroke-width="4"
+          x="2" y="2"
+          rx="10"
+          width="188" height="124"
+  />
+    <rect id="top-right-two-thirds" x="68" y="4" width="120" height="60" rx="10" fill="white"/>
+</svg>
