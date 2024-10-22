@@ -1,0 +1,33 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  rectangle-intellij-plugin
+
+  Copyright 2024 - Brice Dutheil
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at https://mozilla.org/MPL/2.0/.
+-->
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+     width="16" height="16"
+     viewBox="0 0 192 128">
+  <!--
+   In order to punch holes in a rect we actually need to
+   1. transform the rect into a path.
+      m 12 2 h 168 c 5.54 0 10 4.46 10 10 v 104 c 0 5.54 -4.46 10 -10 10 H 12 C 6.46 126 2 121.54 2 116 V 12 C 2 6.46 6.46 2 12 2
+   2. draw each circle as a path
+      M 25 25 a 2 2 0 0 1 22 0 a 2 2 0 0 1 -22 0
+   3. set the fill-rule to evenodd
+   -->
+  <path id="rectangle-menu"
+        fill="black"
+        fill-rule="evenodd"
+        d="
+        m 12 2 h 168 c 5.54 0 10 4.46 10 10 v 104 c 0 5.54 -4.46 10 -10 10 H 12 C 6.46 126 2 121.54 2 116 V 12 C 2 6.46 6.46 2 12 2
+        M 25 25 a 2 2 0 0 1 22 0 a 2 2 0 0 1 -22 0
+        M 60 25 a 2 2 0 0 1 22 0 a 2 2 0 0 1 -22 0
+        M 95 25 a 2 2 0 0 1 22 0 a 2 2 0 0 1 -22 0
+        Z
+        "
+  />
+</svg>

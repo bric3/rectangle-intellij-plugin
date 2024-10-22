@@ -20,7 +20,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import icons.RectangleActionsIcons
-import io.github.bric3.rectangle.RectangleActionName
+import io.github.bric3.rectangle.RectangleWindowActionName
 import io.github.bric3.rectangle.RectangleApplicationService
 import io.github.bric3.rectangle.RectangleBundle.message
 import io.github.bric3.rectangle.RectangleBundle.messagePointer
@@ -28,9 +28,9 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.launch
 
 /**
- * Open the URL `rectangle://execute-action?name=[rectangleActionName]`. Do not activate Rectangle if possible.
+ * Open the URL `rectangle://execute-action?name=[rectangleWindowActionName]`. Do not activate Rectangle if possible.
  *
- * Available values for `[rectangleActionName]`:
+ * Available values for `[rectangleWindowActionName]`:
  *   * `left-half`, `right-half`, `center-half`, `top-half`, `bottom-half`,
  *   * `top-left`, `top-right`, `bottom-left`, `bottom-right`,
  *   * `first-third`, `center-third`, `last-third`,
@@ -46,12 +46,12 @@ import kotlinx.coroutines.launch
  *   * `top-left-eighth`, `top-center-left-eighth`, `top-center-right-eighth`, `top-right-eighth`, `bottom-left-eighth`, `bottom-center-left-eighth`, `bottom-center-right-eighth`, `bottom-right-eighth`,
  *   * `tile-all`, `cascade-all`, `cascade-active-app`
  */
-class RectangleAction(private val rectangleActionName: RectangleActionName) : DumbAwareAction(
-  messagePointer("rectangle.action.text-with-prefix", rectangleActionName.toTitleCase()),
-  rectangleActionName.description(),
-  { RectangleActionsIcons.findIcon(rectangleActionName.name) }
+class RectangleAction(private val rectangleWindowActionName: RectangleWindowActionName) : DumbAwareAction(
+  messagePointer("rectangle.action.text-with-prefix", rectangleWindowActionName.toTitleCase()),
+  rectangleWindowActionName.description(),
+  { RectangleActionsIcons.findIcon(rectangleWindowActionName.name) }
 ) {
-  val id = "$ACTION_PREFIX.${rectangleActionName.toId()}"
+  val id = actionId(rectangleWindowActionName)
 
   init {
     isEnabledInModalContext = true
@@ -61,37 +61,37 @@ class RectangleAction(private val rectangleActionName: RectangleActionName) : Du
 
   override fun update(e: AnActionEvent) {
     e.presentation.text = when (e.place) {
-      ActionPlaces.ACTION_SEARCH -> message("rectangle.action.text-with-prefix", rectangleActionName.toTitleCase())
-      else -> rectangleActionName.toTitleCase()
+      ActionPlaces.ACTION_SEARCH -> message("rectangle.action.text-with-prefix", rectangleWindowActionName.toTitleCase())
+      else -> rectangleWindowActionName.toTitleCase()
     }
     e.presentation.isEnabledAndVisible = true
   }
 
   override fun actionPerformed(p0: AnActionEvent) {
     RectangleApplicationService.getInstance()
-      .newChildScope(CoroutineName("Running Rectangle action $rectangleActionName")).launch {
+      .newChildScope(CoroutineName("Running Rectangle action $rectangleWindowActionName")).launch {
 
       val commandLine = GeneralCommandLine().apply {
         exePath = "/usr/bin/open"
         addParameter("-g")
-        addParameter("rectangle://execute-action?name=$rectangleActionName")
+        addParameter("rectangle://execute-action?name=$rectangleWindowActionName")
       }
 
       val handler = try {
         OSProcessHandler(commandLine)
       } catch (e: Exception) {
-        logger.error("Failed to run Rectangle action $rectangleActionName", e)
+        logger.error("Failed to run Rectangle action $rectangleWindowActionName", e)
         RectangleApplicationService.getInstance()
-          .notifyUser(message("rectangle.action.failure.run.text", rectangleActionName), ERROR)
+          .notifyUser(message("rectangle.action.failure.run.text", rectangleWindowActionName), ERROR)
         return@launch
       }
 
       val runner = CapturingProcessRunner(handler)
       val output = runner.runProcess(1000)
       if (output.isTimeout || output.exitCode != 0) {
-        logger.error("Failed to run Rectangle action $rectangleActionName: ${output.stderr}")
+        logger.error("Failed to run Rectangle action $rectangleWindowActionName: ${output.stderr}")
         RectangleApplicationService.getInstance()
-          .notifyUser(message("rectangle.action.failure.run.text", rectangleActionName), ERROR)
+          .notifyUser(message("rectangle.action.failure.run.text", rectangleWindowActionName), ERROR)
       }
     }
   }
@@ -99,5 +99,6 @@ class RectangleAction(private val rectangleActionName: RectangleActionName) : Du
   companion object {
     private val logger = logger<RectangleAction>()
     const val ACTION_PREFIX = "rectangle"
+    fun actionId(rectangleWindowActionName: RectangleWindowActionName) = "$ACTION_PREFIX.${rectangleWindowActionName.toId()}"
   }
 }

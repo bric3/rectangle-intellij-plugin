@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.Constraints
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.impl.ActionManagerImpl
 import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.NewUI
@@ -30,7 +31,7 @@ import io.github.bric3.rectangle.RectanglePlugin
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.launch
 
-class RectangleActionsRegistraar : AppLifecycleListener, DynamicPluginListener {
+class RectangleWindowActionsRegistraar : AppLifecycleListener, DynamicPluginListener {
   override fun appFrameCreated(commandLineArgs: MutableList<String>) {
     createAndRegisterActions()
   }
@@ -44,7 +45,7 @@ class RectangleActionsRegistraar : AppLifecycleListener, DynamicPluginListener {
   override fun pluginUnloaded(pluginDescriptor: IdeaPluginDescriptor, isUpdate: Boolean) {
     if (pluginDescriptor.pluginId == RectanglePlugin.PLUGIN_ID) {
       val actionManager = ActionManager.getInstance()
-      actionManager.getActionIdList(RectangleAction.ACTION_PREFIX).forEach { actionManager.unregisterAction(it) }
+      RectangleWindowActionsProvider.actionIds.forEach { actionManager.unregisterAction(it) }
     }
   }
 
@@ -63,11 +64,12 @@ class RectangleActionsRegistraar : AppLifecycleListener, DynamicPluginListener {
 
         val actionManager = ActionManager.getInstance()
 
-        if (actionManager.getActionIdList(RectangleAction.ACTION_PREFIX).isNotEmpty()) {
+        if (actionManager.getActionIdList(RectangleAction.ACTION_PREFIX).containsAll(RectangleWindowActionsProvider.actionIds)) {
           return@launch
         }
 
-        RectangleActionsProvider.createActions().forEach { action ->
+        RectangleWindowActionsProvider.createActions().forEach { action ->
+          logger.debug { "Registering action ${action.id}" }
           actionManager.registerAction(action.id, action, RectanglePlugin.PLUGIN_ID)
         }
       }
@@ -97,7 +99,7 @@ class RectangleActionsRegistraar : AppLifecycleListener, DynamicPluginListener {
     private const val MAIN_TOOLBAR_RIGHT_GROUP_ID = "MainToolbarRight"
     private const val SEARCH_EVERYWHERE_ACTION_ID = "SearchEverywhere"
 
-    private val logger = logger<RectangleActionsRegistraar>()
+    private val logger = logger<RectangleWindowActionsRegistraar>()
 
     private val ideBaselineVersion = ApplicationInfo.getInstance().build.baselineVersion
   }

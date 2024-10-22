@@ -11,11 +11,10 @@
 package io.github.bric3.rectangle
 
 import com.intellij.openapi.util.text.StringUtil
-import io.github.bric3.rectangle.RectangleBundle.message
 import io.github.bric3.rectangle.RectangleBundle.messagePointer
 
 @Suppress("EnumEntryName")
-enum class RectangleActionName {
+enum class RectangleWindowActionName {
   `left-half`, `right-half`, `center-half`, `top-half`, `bottom-half`,
   `top-left`, `top-right`, `bottom-left`, `bottom-right`,
   `first-third`, `center-third`, `last-third`,

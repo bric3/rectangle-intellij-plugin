@@ -37,6 +37,7 @@ object RectangleActionsIcons {
   }
 
   /** 16x16 */ @JvmField val Rectangle = load("icons/rectangle.svg")
+  /** 16x16 */ @JvmField val RectangleMenu = load("icons/rectangle-menu.svg")
 
   /* Needs to be 16x16 */
   object Actions {
