@@ -93,6 +93,11 @@ object RectangleActionsIcons {
       /** 16x16 */ @JvmField val MoveDown = load("icons/move-to-edge/move-down.svg")
     }
 
+    object Display {
+      /** 16x16 */ @JvmField val NextDisplay = load("icons/displays/next-display.svg")
+      /** 16x16 */ @JvmField val PreviousDisplay = load("icons/displays/previous-display.svg")
+    }
+
     object General {
       /** 16x16 */ @JvmField val Maximize = load("icons/general/maximize.svg")
       /** 16x16 */ @JvmField val AlmostMaximize = load("icons/general/almost-maximize.svg")

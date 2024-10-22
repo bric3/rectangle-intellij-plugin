@@ -13,8 +13,8 @@
      viewBox="0 0 192 128">
   <rect
           id="screen"
-          stroke="#AFB1B3"
-          fill="#AFB1B3" stroke-width="4"
+          stroke="#AFB1B3" stroke-width="4"
+          fill="#AFB1B3"
           x="2" y="2"
           rx="10"
           width="188" height="124"
