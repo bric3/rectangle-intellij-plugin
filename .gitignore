@@ -6,3 +6,6 @@ build
 
 # Ignore IntelliJ IDEA Plugin project files
 /.intellijPlatform/self-update.lock
+
+# Ignore kotlin compiler files
+/.kotlin/
