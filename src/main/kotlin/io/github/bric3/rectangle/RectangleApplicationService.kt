@@ -42,7 +42,7 @@ class RectangleApplicationService(private val pluginAppScope: CoroutineScope) : 
     return CoroutineScope(pluginAppScope.coroutineContext + newJob + context)
   }
 
-  fun notifyUser(message: String, notificationType: NotificationType, vararg actions: AnAction) {
+  fun notifyUser(message: String, notificationType: NotificationType, customizer: Notification.() -> Unit = {}) {
     Notifications.Bus.notify(
       Notification(
         NOTIFICATION_GROUP_ID,
@@ -51,7 +51,7 @@ class RectangleApplicationService(private val pluginAppScope: CoroutineScope) : 
         notificationType
       ).also { notification ->
         notification.icon = RectangleActionsIcons.Rectangle
-        actions.forEach { notification.addAction(it) }
+        customizer(notification)
       }
     )
   }

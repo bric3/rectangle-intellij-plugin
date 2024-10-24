@@ -10,22 +10,16 @@
 
 package io.github.bric3.rectangle.actions
 
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.CapturingProcessRunner
-import com.intellij.execution.process.OSProcessHandler
-import com.intellij.notification.NotificationType.ERROR
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.ActionUpdateThread.BGT
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import icons.RectangleActionsIcons
+import io.github.bric3.rectangle.RectangleAppService
 import io.github.bric3.rectangle.RectangleWindowActionName
-import io.github.bric3.rectangle.RectangleApplicationService
 import io.github.bric3.rectangle.RectangleBundle.message
 import io.github.bric3.rectangle.RectangleBundle.messagePointer
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.launch
 
 /**
  * Open the URL `rectangle://execute-action?name=[rectangleWindowActionName]`. Do not activate Rectangle if possible.
@@ -68,32 +62,7 @@ class RectangleAction(private val rectangleWindowActionName: RectangleWindowActi
   }
 
   override fun actionPerformed(p0: AnActionEvent) {
-    RectangleApplicationService.getInstance()
-      .newChildScope(CoroutineName("Running Rectangle action $rectangleWindowActionName")).launch {
-
-      val commandLine = GeneralCommandLine().apply {
-        exePath = "/usr/bin/open"
-        addParameter("-g")
-        addParameter("rectangle://execute-action?name=$rectangleWindowActionName")
-      }
-
-      val handler = try {
-        OSProcessHandler(commandLine)
-      } catch (e: Exception) {
-        logger.error("Failed to run Rectangle action $rectangleWindowActionName", e)
-        RectangleApplicationService.getInstance()
-          .notifyUser(message("rectangle.action.failure.run.text", rectangleWindowActionName), ERROR)
-        return@launch
-      }
-
-      val runner = CapturingProcessRunner(handler)
-      val output = runner.runProcess(1000)
-      if (output.isTimeout || output.exitCode != 0) {
-        logger.error("Failed to run Rectangle action $rectangleWindowActionName: ${output.stderr}")
-        RectangleApplicationService.getInstance()
-          .notifyUser(message("rectangle.action.failure.run.text", rectangleWindowActionName), ERROR)
-      }
-    }
+    RectangleAppService.getInstance().runRectangleUrlAction(rectangleWindowActionName.name)
   }
 
   companion object {

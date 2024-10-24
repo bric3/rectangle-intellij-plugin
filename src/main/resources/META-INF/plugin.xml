@@ -17,9 +17,9 @@
   <resource-bundle>messages.RectangleBundle</resource-bundle>
 
   <applicationListeners>
-    <listener class="io.github.bric3.rectangle.actions.RectangleWindowActionsRegistraar"
+    <listener class="io.github.bric3.rectangle.AppPluginLifecycleListener"
               topic="com.intellij.ide.AppLifecycleListener"/>
-    <listener class="io.github.bric3.rectangle.actions.RectangleWindowActionsRegistraar"
+    <listener class="io.github.bric3.rectangle.AppPluginLifecycleListener"
               topic="com.intellij.ide.plugins.DynamicPluginListener"/>
   </applicationListeners>
 

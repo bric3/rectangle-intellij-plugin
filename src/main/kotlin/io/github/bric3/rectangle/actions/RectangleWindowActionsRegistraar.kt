@@ -10,9 +10,6 @@
 
 package io.github.bric3.rectangle.actions
 
-import com.intellij.ide.AppLifecycleListener
-import com.intellij.ide.plugins.DynamicPluginListener
-import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.Anchor
@@ -24,32 +21,28 @@ import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.NewUI
+import io.github.bric3.rectangle.RectangleAppService
 import io.github.bric3.rectangle.RectangleApplicationService
 import io.github.bric3.rectangle.RectangleBundle.message
-import io.github.bric3.rectangle.RectangleDetector
 import io.github.bric3.rectangle.RectanglePlugin
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.launch
 
-class RectangleWindowActionsRegistraar : AppLifecycleListener, DynamicPluginListener {
-  override fun appFrameCreated(commandLineArgs: MutableList<String>) {
-    createAndRegisterActions()
+object RectangleWindowActionsRegistraar {
+  private const val RECTANGLE_TITLE_BAR_ACTION_ID = "rectangle-TitleBar"
+  private const val MAIN_TOOLBAR_RIGHT_GROUP_ID = "MainToolbarRight"
+  private const val SEARCH_EVERYWHERE_ACTION_ID = "SearchEverywhere"
+
+  private val logger = logger<RectangleWindowActionsRegistraar>()
+
+  private val ideBaselineVersion = ApplicationInfo.getInstance().build.baselineVersion
+
+  fun unregisterActions() {
+    val actionManager = ActionManager.getInstance()
+    RectangleWindowActionsProvider.actionIds.forEach { actionManager.unregisterAction(it) }
   }
 
-  override fun pluginLoaded(pluginDescriptor: IdeaPluginDescriptor) {
-    if (pluginDescriptor.pluginId == RectanglePlugin.PLUGIN_ID) {
-      createAndRegisterActions()
-    }
-  }
-
-  override fun pluginUnloaded(pluginDescriptor: IdeaPluginDescriptor, isUpdate: Boolean) {
-    if (pluginDescriptor.pluginId == RectanglePlugin.PLUGIN_ID) {
-      val actionManager = ActionManager.getInstance()
-      RectangleWindowActionsProvider.actionIds.forEach { actionManager.unregisterAction(it) }
-    }
-  }
-
-  private fun createAndRegisterActions() {
+  fun createAndRegisterActions() {
     RectangleApplicationService.getInstance().newChildScope()
       .launch(CoroutineName("RectangleActionsRegistraar")) {
         if (!SystemInfo.isMac) {
@@ -58,13 +51,15 @@ class RectangleWindowActionsRegistraar : AppLifecycleListener, DynamicPluginList
           return@launch
         }
 
-        if (RectangleDetector.detectRectangleVersion() == null) {
+        if (!RectangleAppService.getInstance().detected) {
           return@launch
         }
 
         val actionManager = ActionManager.getInstance()
 
-        if (actionManager.getActionIdList(RectangleAction.ACTION_PREFIX).containsAll(RectangleWindowActionsProvider.actionIds)) {
+        if (actionManager.getActionIdList(RectangleAction.ACTION_PREFIX)
+            .containsAll(RectangleWindowActionsProvider.actionIds)
+        ) {
           return@launch
         }
 
@@ -92,15 +87,5 @@ class RectangleWindowActionsRegistraar : AppLifecycleListener, DynamicPluginList
     } catch (e: Throwable) {
       logger.warn(e)
     }
-  }
-
-  companion object {
-    private const val RECTANGLE_TITLE_BAR_ACTION_ID = "rectangle-TitleBar"
-    private const val MAIN_TOOLBAR_RIGHT_GROUP_ID = "MainToolbarRight"
-    private const val SEARCH_EVERYWHERE_ACTION_ID = "SearchEverywhere"
-
-    private val logger = logger<RectangleWindowActionsRegistraar>()
-
-    private val ideBaselineVersion = ApplicationInfo.getInstance().build.baselineVersion
   }
 }

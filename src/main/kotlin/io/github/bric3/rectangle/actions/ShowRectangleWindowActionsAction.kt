@@ -15,9 +15,11 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread.BGT
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.JBPopupFactory.ActionSelectionAid.SPEEDSEARCH
 import com.intellij.openapi.wm.IdeFocusManager
+import icons.RectangleActionsIcons
 import io.github.bric3.rectangle.actions.RectangleActionUtil.patchActionText
 
 class ShowRectangleWindowActionsAction : DumbAwareAction() {
@@ -25,6 +27,7 @@ class ShowRectangleWindowActionsAction : DumbAwareAction() {
 
   override fun update(e: AnActionEvent) {
     patchActionText(e)
+    e.presentation.icon = RectangleActionsIcons.RectangleMenu
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -60,12 +63,12 @@ class ShowRectangleWindowActionsAction : DumbAwareAction() {
       .setAdText("Click an action")
       .setTitle("Rectangle")
       .createPopup()
-      .showUnderneathOf(e.inputEvent!!.component)
+      .showInBestPositionForEvent(e)
   }
 
   private fun popupMenuWithInlines(e: AnActionEvent) {
     val actionGroup = ActionUtil.getActionGroup("rectangle.Menu") ?: return
-    JBPopupFactory.getInstance()
+    val popup = JBPopupFactory.getInstance()
       .createActionGroupPopup(
         "Rectangle Actions",
         actionGroup,
@@ -73,6 +76,15 @@ class ShowRectangleWindowActionsAction : DumbAwareAction() {
         SPEEDSEARCH,
         true
       )
-      .showUnderneathOf(e.inputEvent!!.component)
+
+    popup.showInBestPositionForEvent(e)
+  }
+
+  private fun JBPopup.showInBestPositionForEvent(e: AnActionEvent) {
+    e.inputEvent?.component?.let {
+      showUnderneathOf(it)
+    } ?: IdeFocusManager.getGlobalInstance().lastFocusedFrame?.component?.let {
+      showInCenterOf(it)
+    } ?: showInBestPositionFor(e.dataContext)
   }
 }
