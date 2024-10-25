@@ -12,6 +12,7 @@ import net.minecraftforge.licenser.header.HeaderFormatRegistry
 import net.minecraftforge.licenser.header.HeaderStyle.HASH
 import org.intellij.lang.annotations.Language
 import org.jetbrains.changelog.Changelog
+import org.jetbrains.changelog.date
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
@@ -97,6 +98,11 @@ intellijPlatform {
       sinceBuild = providers.gradleProperty("pluginSinceBuild")
       untilBuild = provider { null } // Disable upper bound
     }
+
+    vendor {
+      name = providers.gradleProperty("pluginVendor")
+      url = providers.gradleProperty("pluginRepositoryUrl")
+    }
   }
 
   signing {
@@ -125,8 +131,15 @@ intellijPlatform {
 
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
 changelog {
-  groups.empty()
+  path = "${rootProject.projectDir}/CHANGELOG.md"
   repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
+  itemPrefix = "-"
+  version = providers.gradleProperty("pluginVersion")
+  keepUnreleasedSection = true
+  unreleasedTerm = "[Next]"
+  header = provider { "[${version.get()}] - ${date()}" }
+  groups = emptyList()
+  // groups.set(listOf("Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"))
 }
 
 license {
