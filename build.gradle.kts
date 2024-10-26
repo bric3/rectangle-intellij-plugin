@@ -13,7 +13,9 @@ import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.date
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.gradle.ext.settings
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.models.ProductRelease
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -172,6 +174,30 @@ tasks {
   }
   buildPlugin {
     from("LICENSE")
+  }
+
+  val listProductsReleases by registering() {
+    dependsOn(printProductsReleases)
+    val outputF = layout.buildDirectory.file("listProductsReleases.txt").also {
+      outputs.file(it)
+    }
+    val content = printProductsReleases.flatMap { it.productsReleases }.map { it.joinToString("\n") }
+
+    doLast {
+      outputF.orNull?.asFile?.writeText(content.get())
+    }
+  }
+
+  // Latest available EAP release
+  // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-faq.html#how-to-check-the-latest-available-eap-release
+  printProductsReleases {
+    channels = listOf(ProductRelease.Channel.EAP)
+    types = listOf(IntelliJPlatformType.IntellijIdeaCommunity)
+    untilBuild = provider { null }
+
+    doLast {
+      productsReleases.get().max()
+    }
   }
 
   publishPlugin {
