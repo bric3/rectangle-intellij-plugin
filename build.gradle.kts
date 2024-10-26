@@ -8,14 +8,15 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraftforge.licenser.header.HeaderFormatRegistry
-import net.minecraftforge.licenser.header.HeaderStyle.HASH
 import org.intellij.lang.annotations.Language
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.date
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("java")
@@ -23,9 +24,7 @@ plugins {
   alias(libs.plugins.intelliJPlatform)
   alias(libs.plugins.changelog)
   alias(libs.plugins.idea.ext)
-  id("net.minecraftforge.licenser") version "1.0.1"
-  // id("net.neoforged.licenser") version "0.7.0"
-  // id("dev.yumi.gradle.licenser") version "1.2.0"
+  alias(libs.plugins.yumi.licenser)
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -34,6 +33,15 @@ version = providers.gradleProperty("pluginVersion").get()
 // Set the JVM language level used to build the project.
 kotlin {
   jvmToolchain(17)
+
+  compilerOptions {
+    jvmTarget = JvmTarget.fromTarget("17")
+    // Supported version from https://plugins.jetbrains.com/docs/intellij/kotlin.html#kotlin-standard-library
+    apiVersion = KotlinVersion.KOTLIN_1_9
+    languageVersion = KotlinVersion.KOTLIN_1_9
+
+    optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
+  }
 }
 
 // Configure project's dependencies
@@ -143,14 +151,7 @@ changelog {
 }
 
 license {
-  charset("UTF-8")
-  header(rootProject.file("HEADER"))
-  properties {
-    set("name", "Brice Dutheil")
-    set("year", 2024)
-  }
-
-  skipExistingHeaders(true)
+  rule(rootProject.file("HEADER"))
 
   include(
     "**/*.java",
@@ -159,29 +160,11 @@ license {
     "**/*.properties",
     "**/*.xml",
   )
-
-  style(closureOf<HeaderFormatRegistry> {
-    put("toml", HASH)
-    put("properties", HASH)
-  })
-
-  // Do not work well with configuration cache
-  //
-  // tasks(closureOf<NamedDomainObjectContainer<LicenseTaskProperties>> {
-  //   register("gradle") {
-  //     files.from(
-  //       "build.gradle.kts",
-  //       "settings.gradle.kts",
-  //       "gradle.properties",
-  //       "gradle/libs.versions.toml",
-  //     )
-  //   }
-  // })
 }
 
 tasks {
   classes {
-    finalizedBy(licenseFormat)
+    finalizedBy(applyLicenses)
   }
 
   jar {
