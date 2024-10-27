@@ -1,6 +1,12 @@
 # rectangle-intellij-plugin
 Adds Rectangle Actions within JetBrains IDEs
 
+
+![Build](https://github.com/bric3/rectangle-intellij-plugin/workflows/Build/badge.svg)
+[![Version](https://img.shields.io/jetbrains/plugin/v/25677.svg)](https://plugins.jetbrains.com/plugin/25677)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/25677.svg)](https://plugins.jetbrains.com/plugin/25677)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+
 <!-- Plugin description -->
 This plugin allows invoking [**Rectangle**](https://rectangleapp.com) Actions from JetBrains IDEs.
 **Note it is only useful for users on macOs.**
