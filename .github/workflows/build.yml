@@ -139,6 +139,8 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: [ build ]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v4
