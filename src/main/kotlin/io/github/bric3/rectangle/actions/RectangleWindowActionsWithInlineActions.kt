@@ -15,6 +15,8 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread.BGT
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.util.Key
+import io.github.bric3.rectangle.RectangleAppService
 import io.github.bric3.rectangle.RectangleWindowActionName
 import io.github.bric3.rectangle.RectangleWindowActionName.`almost-maximize`
 import io.github.bric3.rectangle.RectangleWindowActionName.`bottom-center-sixth`
@@ -56,6 +58,9 @@ import io.github.bric3.rectangle.RectangleWindowActionName.`top-left-sixth`
 import io.github.bric3.rectangle.RectangleWindowActionName.`top-right`
 import io.github.bric3.rectangle.RectangleWindowActionName.`top-right-sixth`
 import io.github.bric3.rectangle.actions.RectangleActionUtil.originalText
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.staticProperties
 
 abstract class RectangleWindowActionsWithInlineActions(private val actionNames: List<RectangleWindowActionName>)
   : DumbAwareAction() {
@@ -76,7 +81,19 @@ abstract class RectangleWindowActionsWithInlineActions(private val actionNames: 
   override fun update(e: AnActionEvent) {
     // padding to give space to inline actions
     e.presentation.text = originalText()?.padEnd(50)
-    e.presentation.isEnabled = true
+    e.presentation.isEnabled = RectangleAppService.getInstance().detected
+
+    // 243 replace with the key from ActionUtil
+    ActionUtil::class.declaredMemberProperties
+      .firstOrNull { it.name == "ALWAYS_VISIBLE_INLINE_ACTION"}
+      ?.call()
+      ?.let {
+        @Suppress("UNCHECKED_CAST")
+        it as? Key<Boolean>
+      }?.let { key ->
+        e.presentation.putClientProperty(key, true)
+      }
+
   }
 
   override fun actionPerformed(e: AnActionEvent) {
