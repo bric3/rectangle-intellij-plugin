@@ -13,6 +13,7 @@ package io.github.bric3.rectangle
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessRunner
 import com.intellij.execution.process.OSProcessHandler
+import com.intellij.execution.process.ProcessOutput
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationType.ERROR
 import com.intellij.openapi.application.ApplicationManager
@@ -31,27 +32,31 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.time.Duration.Companion.hours
 
+
 @Service(Service.Level.APP)
 class RectangleAppService(private val cs: CoroutineScope) {
+  val rectanglePathFlow : StateFlow<Path?>
   val versionFlow : StateFlow<String?>
 
   val detected: Boolean
     get() = versionFlow.value != null
 
   init {
-    versionFlow = MutableStateFlow(detectRectangleVersion())
+    rectanglePathFlow = MutableStateFlow(detectRectangle())
+    versionFlow = MutableStateFlow(detectRectangleVersion(rectanglePathFlow.value))
     cs.launch {
       while (true) {
         delay(1.hours)
-        versionFlow.value = detectRectangleVersion()
+        rectanglePathFlow.value = detectRectangle()
+        versionFlow.value = detectRectangleVersion(rectanglePathFlow.value)
       }
     }
+
+    notifyUserOnceIfMissingRectangle()
   }
 
-  private fun detectRectangleVersion(): String? {
-    // Runs
-    // mdls -attr kMDItemVersion -raw /Applications/Rectangle.app
-    if (!Files.exists(Path.of(INSTALL_LOCATION))) {
+  private fun notifyUserOnceIfMissingRectangle() {
+    if (rectanglePathFlow.value == null) {
       logger.info("Rectangle App not found")
       RectangleApplicationService.getInstance().notifyUser(
         message("rectangle.action.failure.not-found.text"),
@@ -65,34 +70,66 @@ class RectangleAppService(private val cs: CoroutineScope) {
           // install from brew?
         )
       }
-      return null
+    }
+  }
+
+  private fun detectRectangle(): Path? {
+    val path = if (Files.exists(DEFAULT_INSTALL_LOCATION)) {
+      DEFAULT_INSTALL_LOCATION
+    } else {
+      // find if there's a running Rectangle Process
+      // ps aux | grep Rectangle
+      val detectedPath = object : Command<String?>(
+        onProcessExecutionException = {
+          logger.error("Failed to run ps command", it)
+          null
+        },
+        onProcessFailure = {
+          logger.error("Failed to run ps command: $stderr")
+          null
+        },
+        onProcessSuccess = { stdout.trim() }
+      ) {
+        override fun GeneralCommandLine.commandLine() {
+          exePath = "/bin/ps"
+          addParameters("-e", "-o", "command")
+        }
+      }.run()?.lines()?.firstOrNull {
+        it.contains("Rectangle.app")
+      }?.let {
+        it.substringBefore("Rectangle.app", "") + "Rectangle.app"
+      }?.let {
+        Path.of(it)
+      }
+
+      detectedPath
     }
 
-    val commandLine = GeneralCommandLine().apply {
-      exePath = "/usr/bin/mdls"
-      addParameters("-attr", "kMDItemVersion")
-      addParameter("-raw")
-      addParameter(INSTALL_LOCATION)
-    }
+    return path?.takeIf { getAppBundleId(it) == RECTANGLE_BUNDLE_ID }
+  }
 
-    val handler = try {
-      OSProcessHandler(commandLine)
-    } catch (e: Exception) {
-      logger.error("Failed to detect Rectangle version", e)
-      RectangleApplicationService.getInstance()
-        .notifyUser(message("rectangle.action.failure.detect-version.text"), ERROR)
-      return null
-    }
+  private fun detectRectangleVersion(appPath: Path?): String? {
+    appPath ?: return null
 
-    val runner = CapturingProcessRunner(handler)
-    val output = runner.runProcess(1000)
-    if (output.isTimeout || output.exitCode != 0) {
-      logger.error("Failed to detect Rectangle version: ${output.stderr}")
-      RectangleApplicationService.getInstance()
-        .notifyUser(message("rectangle.action.failure.detect-version.text"), ERROR)
-    }
-
-    return output.stdout.trim()
+    // Runs
+    // mdls -attr kMDItemVersion -raw /Applications/Rectangle.app
+    return MdlsCommand(
+      appPath = appPath.toString(),
+      attributeName = "kMDItemVersion",
+      onProcessExecutionException = {
+        logger.error("Failed to detect Rectangle version", it)
+        RectangleApplicationService.getInstance()
+          .notifyUser(message("rectangle.action.failure.detect-version.text"), ERROR)
+        null
+      },
+      onProcessFailure = {
+          logger.error("Failed to detect Rectangle version: $stderr")
+          RectangleApplicationService.getInstance()
+            .notifyUser(message("rectangle.action.failure.detect-version.text"), ERROR)
+        null
+     },
+      onProcessSuccess = { stdout.trim() }
+    ).run()
   }
 
   fun <T : DefaultsOp> rectangleDefaults(defaultsOp: T): T {
@@ -146,8 +183,74 @@ class RectangleAppService(private val cs: CoroutineScope) {
     }
   }
 
+  // Runs
+  // mdls -attr kMDItemCFBundleIdentifier -raw ....app
+  fun getAppBundleId(path: Path) = MdlsCommand(
+    appPath = path.toString(),
+    attributeName = "kMDItemCFBundleIdentifier",
+    onProcessExecutionException = {
+      logger.error("Failed to get bundle id for $path", it)
+      null
+    },
+    onProcessFailure = {
+      logger.error("Failed to get bundle id for $path: $stderr")
+      null
+    },
+    onProcessSuccess = { stdout.trim() }
+  ).run()
+
+  abstract class Command<T>(
+    private val onProcessExecutionException: (Exception) -> T,
+    private val onProcessFailure: ProcessOutput.() -> T,
+    private val onProcessSuccess: ProcessOutput.() -> T,
+  ) {
+    fun run(): T {
+      val commandLine = GeneralCommandLine().apply {
+        commandLine()
+      }
+
+      val handler = try {
+        OSProcessHandler(commandLine)
+      } catch (e: Exception) {
+        return onProcessExecutionException(e)
+      }
+
+      val runner = CapturingProcessRunner(handler)
+      val output = runner.runProcess(1000)
+
+      return if (output.isTimeout || output.exitCode != 0) {
+        onProcessFailure(output)
+      } else {
+        onProcessSuccess(output)
+      }
+    }
+
+    abstract fun GeneralCommandLine.commandLine()
+  }
+
+  class MdlsCommand<T>(
+    private val appPath: String,
+    private val attributeName: String,
+    onProcessExecutionException: (Exception) -> T,
+    onProcessFailure: ProcessOutput.() -> T,
+    onProcessSuccess: ProcessOutput.() -> T,
+  ) : Command<T>(
+    onProcessExecutionException,
+    onProcessFailure,
+    onProcessSuccess
+  ) {
+    override fun GeneralCommandLine.commandLine() {
+      exePath = "/usr/bin/mdls"
+      addParameters("-attr", attributeName)
+      addParameter("-raw")
+      addParameter(appPath)
+    }
+  }
+
   companion object {
-    private val INSTALL_LOCATION = "/Applications/Rectangle.app"
+    private const val RECTANGLE_BUNDLE_ID = "com.knollsoft.Rectangle"
+
+    private val DEFAULT_INSTALL_LOCATION = Path.of("/Applications/Rectangle.app")
 
     private val logger = logger<RectangleAppService>()
 
