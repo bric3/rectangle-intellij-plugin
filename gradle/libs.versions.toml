@@ -14,6 +14,8 @@ yumi-licenser = "2.0.0"
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
+gradlePlugin-yumi-licenser = { module = "dev.yumi:yumi-gradle-licenser", version.ref = "yumi-licenser" }
+
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
 intelliJPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intelliJPlatform" }

@@ -26,7 +26,7 @@ plugins {
   alias(libs.plugins.intelliJPlatform)
   alias(libs.plugins.changelog)
   alias(libs.plugins.idea.ext)
-  alias(libs.plugins.yumi.licenser)
+  id("license-management")
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -152,23 +152,7 @@ changelog {
   // groups.set(listOf("Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"))
 }
 
-license {
-  rule(rootProject.file("HEADER"))
-
-  include(
-    "**/*.java",
-    "**/*.kt",
-    "**/*.kts",
-    "**/*.properties",
-    "**/*.xml",
-  )
-}
-
 tasks {
-  classes {
-    finalizedBy(applyLicenses)
-  }
-
   jar {
     from("LICENSE")
   }
