@@ -16,6 +16,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.wm.IdeFocusManager
+import com.intellij.util.ui.JBFont
+import com.intellij.util.ui.JBUI
 import io.github.bric3.rectangle.RectangleAppService
 import io.github.bric3.rectangle.RectangleWindowActionName
 import io.github.bric3.rectangle.RectangleWindowActionName.`almost-maximize`
@@ -80,7 +83,15 @@ abstract class RectangleWindowActionsWithInlineActions(private val actionNames: 
 
   override fun update(e: AnActionEvent) {
     // padding to give space to inline actions
-    e.presentation.text = originalText()?.padEnd(50)
+    val charWidth = IdeFocusManager.getGlobalInstance().lastFocusedFrame
+      ?.component
+      ?.getFontMetrics(JBFont.label())
+      ?.widths
+      ?.average()
+      ?.toInt()
+
+    val iconBorders = 3
+    e.presentation.text = originalText()?.padEnd(actionNames.size * JBUI.scale((charWidth ?: 6) + iconBorders))
     e.presentation.isEnabled = RectangleAppService.getInstance().detected
 
     // 243 replace with the key from ActionUtil
