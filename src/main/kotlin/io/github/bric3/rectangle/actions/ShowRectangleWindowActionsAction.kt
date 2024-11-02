@@ -20,6 +20,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.JBPopupFactory.ActionSelectionAid.SPEEDSEARCH
 import com.intellij.openapi.wm.IdeFocusManager
 import icons.RectangleActionsIcons
+import io.github.bric3.rectangle.RectangleAppService
 import io.github.bric3.rectangle.actions.RectangleActionUtil.patchActionText
 
 class ShowRectangleWindowActionsAction : DumbAwareAction() {
@@ -28,6 +29,7 @@ class ShowRectangleWindowActionsAction : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     patchActionText(e)
     e.presentation.icon = RectangleActionsIcons.RectangleMenu
+    e.presentation.isEnabledAndVisible = RectangleAppService.getInstance().detected
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -36,6 +38,7 @@ class ShowRectangleWindowActionsAction : DumbAwareAction() {
     // popupWithCustomContent(e)
   }
 
+  @Suppress("UnstableApiUsage")
   private fun popupWithCustomContent(e: AnActionEvent) {
     val frame = IdeFocusManager.getGlobalInstance().lastFocusedFrame ?: return
 
@@ -67,6 +70,7 @@ class ShowRectangleWindowActionsAction : DumbAwareAction() {
   }
 
   private fun popupMenuWithInlines(e: AnActionEvent) {
+    @Suppress("UnstableApiUsage")
     val actionGroup = ActionUtil.getActionGroup("rectangle.Menu") ?: return
     val popup = JBPopupFactory.getInstance()
       .createActionGroupPopup(

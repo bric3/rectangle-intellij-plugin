@@ -11,15 +11,18 @@
 package io.github.bric3.rectangle.actions
 
 import com.intellij.openapi.actionSystem.ActionPlaces
-import com.intellij.openapi.actionSystem.ActionUpdateThread.BGT
+import com.intellij.openapi.actionSystem.ActionUpdateThread.EDT
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import icons.RectangleActionsIcons
+import io.github.bric3.rectangle.LastIdeFrameScreenOrientationDetection
 import io.github.bric3.rectangle.RectangleAppService
 import io.github.bric3.rectangle.RectangleWindowActionName
 import io.github.bric3.rectangle.RectangleBundle.message
 import io.github.bric3.rectangle.RectangleBundle.messagePointer
+import io.github.bric3.rectangle.isOrientable
+import io.github.bric3.rectangle.util.RotatedIcon
 
 /**
  * Open the URL `rectangle://execute-action?name=[rectangleWindowActionName]`. Do not activate Rectangle if possible.
@@ -51,14 +54,22 @@ class RectangleAction(private val rectangleWindowActionName: RectangleWindowActi
     isEnabledInModalContext = true
   }
 
-  override fun getActionUpdateThread() = BGT
+  override fun getActionUpdateThread() = EDT
 
   override fun update(e: AnActionEvent) {
+    e.presentation.isEnabledAndVisible = true
     e.presentation.text = when (e.place) {
       ActionPlaces.ACTION_SEARCH -> message("rectangle.action.text-with-prefix", rectangleWindowActionName.toTitleCase())
       else -> rectangleWindowActionName.toTitleCase()
     }
-    e.presentation.isEnabledAndVisible = true
+
+    if (rectangleWindowActionName.isOrientable) {
+      val angle = if(LastIdeFrameScreenOrientationDetection.isPortrait()) 90.0 else 0.0
+      e.presentation.icon = when (val icon = e.presentation.icon) {
+        is RotatedIcon -> icon.apply { degrees = angle }
+        else -> RotatedIcon(icon, angle)
+      }
+    }
   }
 
   override fun actionPerformed(p0: AnActionEvent) {
