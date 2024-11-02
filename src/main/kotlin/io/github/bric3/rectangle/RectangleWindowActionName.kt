@@ -12,6 +12,17 @@ package io.github.bric3.rectangle
 
 import com.intellij.openapi.util.text.StringUtil
 import io.github.bric3.rectangle.RectangleBundle.messagePointer
+import io.github.bric3.rectangle.RectangleWindowActionName.`first-third`
+import io.github.bric3.rectangle.RectangleWindowActionName.`center-third`
+import io.github.bric3.rectangle.RectangleWindowActionName.`last-third`
+import io.github.bric3.rectangle.RectangleWindowActionName.`first-two-thirds`
+import io.github.bric3.rectangle.RectangleWindowActionName.`last-two-thirds`
+import io.github.bric3.rectangle.RectangleWindowActionName.`first-fourth`
+import io.github.bric3.rectangle.RectangleWindowActionName.`second-fourth`
+import io.github.bric3.rectangle.RectangleWindowActionName.`third-fourth`
+import io.github.bric3.rectangle.RectangleWindowActionName.`last-fourth`
+import io.github.bric3.rectangle.RectangleWindowActionName.`first-three-fourths`
+import io.github.bric3.rectangle.RectangleWindowActionName.`last-three-fourths`
 
 @Suppress("EnumEntryName")
 enum class RectangleWindowActionName {
@@ -36,3 +47,14 @@ enum class RectangleWindowActionName {
   fun toId() = StringUtil.toTitleCase(name).replace("-", "")
   fun description() = messagePointer("rectangle.action.${name}.description")
 }
+
+val RectangleWindowActionName.isOrientable
+  get() = when (this) {
+  `first-third`, `center-third`, `last-third`, `first-two-thirds`, `last-two-thirds`,
+  `first-fourth`, `second-fourth`, `third-fourth`, `last-fourth`, `first-three-fourths`, `last-three-fourths`,
+
+    -> true
+  else -> false
+}
+
+
