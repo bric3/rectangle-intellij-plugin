@@ -12,17 +12,7 @@ package io.github.bric3.rectangle
 
 import com.intellij.openapi.util.text.StringUtil
 import io.github.bric3.rectangle.RectangleBundle.messagePointer
-import io.github.bric3.rectangle.RectangleWindowActionName.`first-third`
-import io.github.bric3.rectangle.RectangleWindowActionName.`center-third`
-import io.github.bric3.rectangle.RectangleWindowActionName.`last-third`
-import io.github.bric3.rectangle.RectangleWindowActionName.`first-two-thirds`
-import io.github.bric3.rectangle.RectangleWindowActionName.`last-two-thirds`
-import io.github.bric3.rectangle.RectangleWindowActionName.`first-fourth`
-import io.github.bric3.rectangle.RectangleWindowActionName.`second-fourth`
-import io.github.bric3.rectangle.RectangleWindowActionName.`third-fourth`
-import io.github.bric3.rectangle.RectangleWindowActionName.`last-fourth`
-import io.github.bric3.rectangle.RectangleWindowActionName.`first-three-fourths`
-import io.github.bric3.rectangle.RectangleWindowActionName.`last-three-fourths`
+import io.github.bric3.rectangle.RectangleWindowActionName.Category
 
 @Suppress("EnumEntryName")
 enum class RectangleWindowActionName {
@@ -53,8 +43,22 @@ enum class RectangleWindowActionName {
     Halves(`left-half`, `right-half`, `center-half`, `top-half`, `bottom-half`),
     Corners(`top-left`, `top-right`, `bottom-left`, `bottom-right`),
     Thirds(`first-third`, `center-third`, `last-third`, `first-two-thirds`, `last-two-thirds`),
-    Fourths(`first-fourth`, `second-fourth`, `third-fourth`, `last-fourth`, `first-three-fourths`, `last-three-fourths`),
-    Sixths(`top-left-sixth`, `top-center-sixth`, `top-right-sixth`, `bottom-left-sixth`, `bottom-center-sixth`, `bottom-right-sixth`),
+    Fourths(
+      `first-fourth`,
+      `second-fourth`,
+      `third-fourth`,
+      `last-fourth`,
+      `first-three-fourths`,
+      `last-three-fourths`
+    ),
+    Sixths(
+      `top-left-sixth`,
+      `top-center-sixth`,
+      `top-right-sixth`,
+      `bottom-left-sixth`,
+      `bottom-center-sixth`,
+      `bottom-right-sixth`
+    ),
     Ninths(
       `top-left-ninth`, `top-center-ninth`, `top-right-ninth`,
       `middle-left-ninth`, `middle-center-ninth`, `middle-right-ninth`,
@@ -71,13 +75,6 @@ enum class RectangleWindowActionName {
   }
 }
 
+private val orientableCategories = setOf(Category.Thirds, Category.Fourths, Category.Sixths, Category.Ninths, Category.Eighths)
 val RectangleWindowActionName.isOrientable
-  get() = when (this) {
-  `first-third`, `center-third`, `last-third`, `first-two-thirds`, `last-two-thirds`,
-  `first-fourth`, `second-fourth`, `third-fourth`, `last-fourth`, `first-three-fourths`, `last-three-fourths`,
-
-    -> true
-  else -> false
-}
-
-
+  get() = orientableCategories.any { it.actionNames.contains(this) }
