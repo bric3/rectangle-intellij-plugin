@@ -62,14 +62,19 @@ class RectangleAppService(private val cs: CoroutineScope) {
       RectangleApplicationService.getInstance().notifyUser(
         message("rectangle.action.failure.not-found.text"),
         ERROR
-      ) {
+      ) notification@{
         addAction(
           @Suppress("DialogTitleCapitalization")
           DumbAwareAction.create(message("rectangle.action.suggested-actions.install-from-web.text")) {
             BrowserUtil.browse("https://rectangleapp.com/")
           }
         )
-        BrewRectangleInstaller.brewRectangleInstallAction?.let { addAction(it) }
+        BrewRectangleInstaller.brewRectangleInstallAction?.let { delegate ->
+          addAction(DumbAwareAction.create(delegate.templateText) {
+            delegate.actionPerformed(it)
+            this@notification.expire()
+          })
+        }
       }
     }
   }

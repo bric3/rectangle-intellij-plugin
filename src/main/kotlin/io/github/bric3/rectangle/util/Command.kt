@@ -14,12 +14,16 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessRunner
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessOutput
+import com.intellij.openapi.progress.ProgressIndicator
 
 abstract class Command<T>(
   private val onProcessExecutionException: (Exception) -> T,
   private val onProcessFailure: ProcessOutput.() -> T,
   private val onProcessSuccess: ProcessOutput.() -> T,
 ) {
+  open val progressIndicator: ProgressIndicator? = null
+  open val timeout: Int = 1_000
+
   fun run(): T {
     val commandLine = GeneralCommandLine().apply {
       commandLine()
@@ -32,7 +36,9 @@ abstract class Command<T>(
     }
 
     val runner = CapturingProcessRunner(handler)
-    val output = runner.runProcess(1000)
+    // inspired by git4idea.config.GitVersion#identifyVersion
+    // check obsolescence
+    val output = progressIndicator?.let { runner.runProcess(it) } ?: runner.runProcess(timeout)
 
     return if (output.isTimeout || output.exitCode != 0) {
       onProcessFailure(output)
