@@ -22,6 +22,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import io.github.bric3.rectangle.RectangleBundle.message
+import io.github.bric3.rectangle.util.Command
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -61,14 +62,19 @@ class RectangleAppService(private val cs: CoroutineScope) {
       RectangleApplicationService.getInstance().notifyUser(
         message("rectangle.action.failure.not-found.text"),
         ERROR
-      ) {
+      ) notification@{
         addAction(
           @Suppress("DialogTitleCapitalization")
-          DumbAwareAction.create(message("rectangle.action.failure.suggested-actions.install-from-web.text")) {
+          DumbAwareAction.create(message("rectangle.action.suggested-actions.install-from-web.text")) {
             BrowserUtil.browse("https://rectangleapp.com/")
-          },
-          // install from brew?
+          }
         )
+        BrewRectangleInstaller.brewRectangleInstallAction?.let { delegate ->
+          addAction(DumbAwareAction.create(delegate.templateText) {
+            delegate.actionPerformed(it)
+            this@notification.expire()
+          })
+        }
       }
     }
   }
@@ -198,35 +204,6 @@ class RectangleAppService(private val cs: CoroutineScope) {
     },
     onProcessSuccess = { stdout.trim() }
   ).run()
-
-  abstract class Command<T>(
-    private val onProcessExecutionException: (Exception) -> T,
-    private val onProcessFailure: ProcessOutput.() -> T,
-    private val onProcessSuccess: ProcessOutput.() -> T,
-  ) {
-    fun run(): T {
-      val commandLine = GeneralCommandLine().apply {
-        commandLine()
-      }
-
-      val handler = try {
-        OSProcessHandler(commandLine)
-      } catch (e: Exception) {
-        return onProcessExecutionException(e)
-      }
-
-      val runner = CapturingProcessRunner(handler)
-      val output = runner.runProcess(1000)
-
-      return if (output.isTimeout || output.exitCode != 0) {
-        onProcessFailure(output)
-      } else {
-        onProcessSuccess(output)
-      }
-    }
-
-    abstract fun GeneralCommandLine.commandLine()
-  }
 
   class MdlsCommand<T>(
     private val appPath: String,
