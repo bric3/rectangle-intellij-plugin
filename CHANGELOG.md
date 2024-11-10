@@ -7,6 +7,7 @@
 ### Fixed
 
 - Workaround for actionPerformed being override-only in 2024.3.
+- Bump minimum platform to 2024.2 due to `coroutineToIndicator` being internal before.
 
 ## 0.0.2 - 2021-11-10
 
