@@ -4,6 +4,12 @@
 
 ## [Next]
 
+### Fixed
+
+- Workaround for actionPerformed being override-only in 2024.3.
+
+## 0.0.2 - 2021-11-10
+
 ### Added
 
 - Suggest installing Rectangle via brew if not installed.

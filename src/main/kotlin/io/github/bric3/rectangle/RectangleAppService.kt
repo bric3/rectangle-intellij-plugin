@@ -16,6 +16,7 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessOutput
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationType.ERROR
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -71,7 +72,10 @@ class RectangleAppService(private val cs: CoroutineScope) {
         )
         BrewRectangleInstaller.brewRectangleInstallAction?.let { delegate ->
           addAction(DumbAwareAction.create(delegate.templateText) {
-            delegate.actionPerformed(it)
+            ActionUtil.performActionDumbAwareWithCallbacks(
+              delegate,
+              it,
+            )
             this@notification.expire()
           })
         }
