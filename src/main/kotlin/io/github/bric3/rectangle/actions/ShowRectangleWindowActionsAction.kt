@@ -10,7 +10,6 @@
 
 package io.github.bric3.rectangle.actions
 
-import com.intellij.collaboration.ui.VerticalListPanel
 import com.intellij.openapi.actionSystem.ActionUpdateThread.BGT
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -22,6 +21,8 @@ import com.intellij.openapi.wm.IdeFocusManager
 import icons.RectangleActionsIcons
 import io.github.bric3.rectangle.RectangleAppService
 import io.github.bric3.rectangle.actions.RectangleActionUtil.patchActionText
+import org.jdesktop.swingx.VerticalLayout
+import javax.swing.JPanel
 
 class ShowRectangleWindowActionsAction : DumbAwareAction() {
   override fun getActionUpdateThread() = BGT
@@ -56,7 +57,7 @@ class ShowRectangleWindowActionsAction : DumbAwareAction() {
       true
     )
 
-    val content = VerticalListPanel(2).apply {
+    val content = JPanel(VerticalLayout(2)).apply {
       add(halves)
       add(corners)
     }

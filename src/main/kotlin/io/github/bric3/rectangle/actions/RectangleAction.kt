@@ -67,7 +67,7 @@ class RectangleAction(private val rectangleWindowActionName: RectangleWindowActi
       val angle = if(LastIdeFrameScreenOrientationDetection.isPortrait()) 90.0 else 0.0
       e.presentation.icon = when (val icon = e.presentation.icon) {
         is RotatedIcon -> icon.apply { degrees = angle }
-        else -> RotatedIcon(icon, angle)
+        else -> icon?.let { RotatedIcon(icon, angle) }
       }
     }
   }
