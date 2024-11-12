@@ -190,7 +190,7 @@ tasks {
 
   // About Daemon JVM Criteria: https://docs.gradle.org/current/userguide/gradle_daemon.html#sec:daemon_jvm_criteria
   updateDaemonJvm {
-    jvmVersion = JavaVersion.VERSION_21
+    jvmVersion = JavaLanguageVersion.of(21)
   }
 }
 
