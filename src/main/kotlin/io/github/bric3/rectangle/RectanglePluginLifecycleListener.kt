@@ -16,7 +16,7 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor
 import io.github.bric3.rectangle.actions.RectangleWindowActionsRegistraar
 import io.github.bric3.rectangle.actions.RectangleWindowActionsRegistraar.createAndRegisterActions
 
-class AppPluginLifecycleListener : AppLifecycleListener, DynamicPluginListener {
+class RectanglePluginLifecycleListener : AppLifecycleListener, DynamicPluginListener {
   override fun appFrameCreated(commandLineArgs: MutableList<String>) {
     createAndRegisterActions()
 

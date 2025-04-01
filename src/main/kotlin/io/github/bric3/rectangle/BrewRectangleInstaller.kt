@@ -37,7 +37,7 @@ object BrewRectangleInstaller {
   val brewRectangleInstallAction: DumbAwareAction?
     get() = if (Files.isExecutable(Path.of(BREW_BIN_PATH))) {
       DumbAwareAction.create(message("rectangle.action.suggested-actions.brew-install.text")) {
-        RectangleApplicationService.getInstance().newChildScope(CoroutineName("brew-install-rectangle")).launch {
+        RectanglePluginApplicationService.getInstance().newChildScope(CoroutineName("brew-install-rectangle")).launch {
           withProgressReporterIfPossible {
             withContext(Dispatchers.IO) {
               coroutineToIndicator {
@@ -70,12 +70,12 @@ object BrewRectangleInstaller {
     object : Command<Unit>(
       onProcessExecutionException = {
         logger.error("Error while installing Rectangle", it)
-        RectangleApplicationService.getInstance()
+        RectanglePluginApplicationService.getInstance()
           .notifyUser(message("rectangle.action.suggested-actions.brew-install.failure.text"), ERROR)
       },
       onProcessFailure = {
         logger.error("Error while installing Rectangle (timeout: $isTimeout): $stderr")
-        RectangleApplicationService.getInstance()
+        RectanglePluginApplicationService.getInstance()
           .notifyUser(message("rectangle.action.suggested-actions.brew-install.failure.text"), ERROR)
       },
       onProcessSuccess = { }

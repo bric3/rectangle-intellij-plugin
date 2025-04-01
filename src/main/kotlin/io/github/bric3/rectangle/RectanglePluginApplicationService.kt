@@ -14,7 +14,6 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -30,7 +29,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 
 @Service(Service.Level.APP)
-class RectangleApplicationService(private val pluginAppScope: CoroutineScope) : Disposable {
+class RectanglePluginApplicationService(private val pluginAppScope: CoroutineScope) : Disposable {
   fun newChildScope(
     context: CoroutineContext = EmptyCoroutineContext,
     supervisor: Boolean = true,
@@ -62,6 +61,6 @@ class RectangleApplicationService(private val pluginAppScope: CoroutineScope) : 
     private const val NOTIFICATION_GROUP_ID = "Rectangle"
     private val NOTIFICATION_TITLE = message("rectangle.notification.title")
 
-    fun getInstance() = ApplicationManager.getApplication().service<RectangleApplicationService>()
+    fun getInstance() = ApplicationManager.getApplication().service<RectanglePluginApplicationService>()
   }
 }

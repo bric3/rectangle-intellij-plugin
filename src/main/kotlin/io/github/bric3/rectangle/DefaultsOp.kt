@@ -21,7 +21,7 @@ interface DefaultsOp {
   fun applyParameters(generalCommandLine: GeneralCommandLine)
   fun handleFailure(output: ProcessOutput) {
     thisLogger().error("Failed to run defaults op $name: ${output.stderr}")
-    RectangleApplicationService.getInstance()
+    RectanglePluginApplicationService.getInstance()
       .notifyUser(message("rectangle.action.failure.defaults-$name.text"), ERROR)
   }
 

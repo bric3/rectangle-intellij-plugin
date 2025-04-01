@@ -26,9 +26,9 @@ object DragSnapTweak {
       return
     }
 
-    RectangleApplicationService.getInstance().newChildScope().launch {
+    RectanglePluginApplicationService.getInstance().newChildScope().launch {
       if (RectangleAppService.getInstance().rectangleDefaults(ReadOp(IgnoreDragSnapToo)).value != false) {
-        RectangleApplicationService.getInstance().notifyUser(
+        RectanglePluginApplicationService.getInstance().notifyUser(
           message("rectangle.notification.drag-snap-ignored.title"),
           NotificationType.INFORMATION,
         ) {
@@ -77,14 +77,14 @@ object DragSnapTweak {
 
 class AllowDragSnapForIgnoredAppsAction(private val notification: Notification) : DumbAwareAction(message("rectangle.notification.drag-snap-ignored.suggested-action.enable")) {
   override fun actionPerformed(e: AnActionEvent) {
-    RectangleApplicationService.getInstance().newChildScope().launch {
+    RectanglePluginApplicationService.getInstance().newChildScope().launch {
       RectangleAppService.getInstance().rectangleDefaults(
         DefaultsOp.WriteOp(IgnoreDragSnapToo, false)
       ).run {
         if (isSuccessful) {
           notification.expire()
 
-          RectangleApplicationService.getInstance().notifyUser(
+          RectanglePluginApplicationService.getInstance().notifyUser(
             message("rectangle.notification.drag-snap-ignored.next-step.enabled"),
             NotificationType.INFORMATION
           )

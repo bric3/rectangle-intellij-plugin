@@ -22,7 +22,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.NewUI
 import io.github.bric3.rectangle.RectangleAppService
-import io.github.bric3.rectangle.RectangleApplicationService
+import io.github.bric3.rectangle.RectanglePluginApplicationService
 import io.github.bric3.rectangle.RectangleBundle.message
 import io.github.bric3.rectangle.RectanglePlugin
 import kotlinx.coroutines.CoroutineName
@@ -43,10 +43,10 @@ object RectangleWindowActionsRegistraar {
   }
 
   fun createAndRegisterActions() {
-    RectangleApplicationService.getInstance().newChildScope()
+    RectanglePluginApplicationService.getInstance().newChildScope()
       .launch(CoroutineName("RectangleActionsRegistraar")) {
         if (!SystemInfo.isMac) {
-          RectangleApplicationService.getInstance()
+          RectanglePluginApplicationService.getInstance()
             .notifyUser(message("rectangle.failure.not-available.text"), NotificationType.ERROR)
           return@launch
         }

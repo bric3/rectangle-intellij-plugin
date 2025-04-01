@@ -60,7 +60,7 @@ class RectangleAppService(private val cs: CoroutineScope) {
   private fun notifyUserOnceIfMissingRectangle() {
     if (rectanglePathFlow.value == null) {
       logger.info("Rectangle App not found")
-      RectangleApplicationService.getInstance().notifyUser(
+      RectanglePluginApplicationService.getInstance().notifyUser(
         message("rectangle.action.failure.not-found.text"),
         ERROR
       ) notification@{
@@ -128,13 +128,13 @@ class RectangleAppService(private val cs: CoroutineScope) {
       attributeName = "kMDItemVersion",
       onProcessExecutionException = {
         logger.error("Failed to detect Rectangle version", it)
-        RectangleApplicationService.getInstance()
+        RectanglePluginApplicationService.getInstance()
           .notifyUser(message("rectangle.action.failure.detect-version.text"), ERROR)
         null
       },
       onProcessFailure = {
           logger.error("Failed to detect Rectangle version: $stderr")
-          RectangleApplicationService.getInstance()
+          RectanglePluginApplicationService.getInstance()
             .notifyUser(message("rectangle.action.failure.detect-version.text"), ERROR)
         null
      },
@@ -178,7 +178,7 @@ class RectangleAppService(private val cs: CoroutineScope) {
         OSProcessHandler(commandLine)
       } catch (e: Exception) {
         logger.error("Failed to run Rectangle action $rectangleActionName", e)
-        RectangleApplicationService.getInstance()
+        RectanglePluginApplicationService.getInstance()
           .notifyUser(message("rectangle.action.failure.run.text", rectangleActionName), ERROR)
         return@launch
       }
@@ -187,7 +187,7 @@ class RectangleAppService(private val cs: CoroutineScope) {
       val output = runner.runProcess(1000)
       if (output.isTimeout || output.exitCode != 0) {
         logger.error("Failed to run Rectangle action $rectangleActionName: ${output.stderr}")
-        RectangleApplicationService.getInstance()
+        RectanglePluginApplicationService.getInstance()
           .notifyUser(message("rectangle.action.failure.run.text", rectangleActionName), ERROR)
       }
     }
