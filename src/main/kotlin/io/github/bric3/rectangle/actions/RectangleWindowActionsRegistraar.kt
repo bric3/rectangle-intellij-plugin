@@ -26,6 +26,8 @@ import io.github.bric3.rectangle.RectanglePluginApplicationService
 import io.github.bric3.rectangle.RectangleBundle.message
 import io.github.bric3.rectangle.RectanglePlugin
 import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 object RectangleWindowActionsRegistraar {
@@ -52,23 +54,23 @@ object RectangleWindowActionsRegistraar {
           return@launch
         }
 
-        if (!RectangleAppService.getInstance().detected) {
-          return@launch
-        }
+        RectangleAppService.getInstance().detectedFlow
+          .filter { it }
+          .collectLatest {
+            val actionManager = ActionManager.getInstance()
 
-        val actionManager = ActionManager.getInstance()
+            if (actionManager.getActionIdList(RectangleAction.ACTION_PREFIX)
+                .containsAll(RectangleWindowActionsProvider.actionIds)
+            ) {
+              return@collectLatest
+            }
 
-        if (actionManager.getActionIdList(RectangleAction.ACTION_PREFIX)
-            .containsAll(RectangleWindowActionsProvider.actionIds)
-        ) {
-          return@launch
-        }
-
-        RectangleWindowActionsProvider.createActions().forEach { action ->
-          logger.debug { "Registering action ${action.id}" }
-          actionManager.registerAction(action.id, action, RectanglePlugin.PLUGIN_ID)
-        }
-        registerActionInTitleBar()
+            RectangleWindowActionsProvider.createActions().forEach { action ->
+              logger.debug { "Registering action ${action.id}" }
+              actionManager.registerAction(action.id, action, RectanglePlugin.PLUGIN_ID)
+            }
+            registerActionInTitleBar()
+          }
       }
   }
 

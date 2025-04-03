@@ -10,6 +10,7 @@
 
 package io.github.bric3.rectangle
 
+import com.github.weisj.jsvg.cs
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessRunner
 import com.intellij.execution.process.OSProcessHandler
@@ -24,11 +25,19 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import io.github.bric3.rectangle.RectangleBundle.message
 import io.github.bric3.rectangle.util.Command
+import io.github.bric3.rectangle.util.retry
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.nio.file.Files
 import java.nio.file.Path
@@ -37,48 +46,63 @@ import kotlin.time.Duration.Companion.hours
 
 @Service(Service.Level.APP)
 class RectangleAppService(private val cs: CoroutineScope) {
-  val rectanglePathFlow : StateFlow<Path?>
-  val versionFlow : StateFlow<String?>
+  private val detectedRectangleVersion = MutableSharedFlow<String?>()
 
-  val detected: Boolean
-    get() = versionFlow.value != null
+  // private val rectanglePathFlow : StateFlow<Path?>
+  // private val versionFlow : StateFlow<String?>
+
+  val detectedFlow: StateFlow<Boolean> = detectedRectangleVersion
+    .map { it != null }
+    .stateIn(cs, SharingStarted.Eagerly, false)
 
   init {
-    rectanglePathFlow = MutableStateFlow(detectRectangle())
-    versionFlow = MutableStateFlow(detectRectangleVersion(rectanglePathFlow.value))
+    val notified = false
     cs.launch {
       while (true) {
+        val version = retry { detectRectangle() }?.let { rectanglePath ->
+          retry { detectRectangleVersion(rectanglePath) }
+        }
+        if (version != null) {
+          detectedRectangleVersion.emit(version)
+        } else if (!notified) {
+          notifyUserOnceIfMissingRectangle()
+        }
         delay(1.hours)
-        rectanglePathFlow.value = detectRectangle()
-        versionFlow.value = detectRectangleVersion(rectanglePathFlow.value)
       }
     }
 
-    notifyUserOnceIfMissingRectangle()
+    // rectanglePathFlow = MutableStateFlow(detectRectangle())
+    // versionFlow = MutableStateFlow(detectRectangleVersion(rectanglePathFlow.value))
+    // cs.launch {
+    //   while (true) {
+    //     delay(1.hours)
+    //     rectanglePathFlow.value = detectRectangle()
+    //     versionFlow.value = detectRectangleVersion(rectanglePathFlow.value)
+    //   }
+    // }
+    // notifyUserOnceIfMissingRectangle()
   }
 
   private fun notifyUserOnceIfMissingRectangle() {
-    if (rectanglePathFlow.value == null) {
-      logger.info("Rectangle App not found")
-      RectanglePluginApplicationService.getInstance().notifyUser(
-        message("rectangle.action.failure.not-found.text"),
-        ERROR
-      ) notification@{
-        addAction(
-          @Suppress("DialogTitleCapitalization")
-          DumbAwareAction.create(message("rectangle.action.suggested-actions.install-from-web.text")) {
-            BrowserUtil.browse("https://rectangleapp.com/")
-          }
-        )
-        BrewRectangleInstaller.brewRectangleInstallAction?.let { delegate ->
-          addAction(DumbAwareAction.create(delegate.templateText) {
-            ActionUtil.performActionDumbAwareWithCallbacks(
-              delegate,
-              it,
-            )
-            this@notification.expire()
-          })
+    logger.info("Rectangle App not found")
+    RectanglePluginApplicationService.getInstance().notifyUser(
+      message("rectangle.action.failure.not-found.text"),
+      ERROR
+    ) notification@{
+      addAction(
+        @Suppress("DialogTitleCapitalization")
+        DumbAwareAction.create(message("rectangle.action.suggested-actions.install-from-web.text")) {
+          BrowserUtil.browse("https://rectangleapp.com/")
         }
+      )
+      BrewRectangleInstaller.brewRectangleInstallAction?.let { delegate ->
+        addAction(DumbAwareAction.create(delegate.templateText) {
+          ActionUtil.performActionDumbAwareWithCallbacks(
+            delegate,
+            it,
+          )
+          this@notification.expire()
+        })
       }
     }
   }

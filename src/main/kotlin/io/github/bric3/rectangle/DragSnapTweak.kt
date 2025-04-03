@@ -18,21 +18,26 @@ import io.github.bric3.rectangle.DefaultsOp.ReadOp
 import io.github.bric3.rectangle.DefaultsOp.SettingsKey
 import io.github.bric3.rectangle.DragSnapTweak.IgnoreDragSnapToo
 import io.github.bric3.rectangle.RectangleBundle.message
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 object DragSnapTweak {
   fun suggestEnablingDragSnapWhenAppIgnored() {
-    if (!RectangleAppService.getInstance().detected) {
+    if (!RectangleAppService.getInstance().detectedFlow.value) {
       return
     }
 
     RectanglePluginApplicationService.getInstance().newChildScope().launch {
-      if (RectangleAppService.getInstance().rectangleDefaults(ReadOp(IgnoreDragSnapToo)).value != false) {
-        RectanglePluginApplicationService.getInstance().notifyUser(
-          message("rectangle.notification.drag-snap-ignored.title"),
-          NotificationType.INFORMATION,
-        ) {
-          addAction(AllowDragSnapForIgnoredAppsAction(this))
+      RectangleAppService.getInstance().detectedFlow.filter { it }.collectLatest {
+        // TODO use 0.86
+        if (RectangleAppService.getInstance().rectangleDefaults(ReadOp(IgnoreDragSnapToo)).value != false) {
+          RectanglePluginApplicationService.getInstance().notifyUser(
+            message("rectangle.notification.drag-snap-ignored.title"),
+            NotificationType.INFORMATION,
+          ) {
+            addAction(AllowDragSnapForIgnoredAppsAction(this))
+          }
         }
       }
     }

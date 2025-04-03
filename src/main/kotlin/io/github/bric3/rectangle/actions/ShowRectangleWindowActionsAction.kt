@@ -30,7 +30,7 @@ class ShowRectangleWindowActionsAction : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     patchActionText(e)
     e.presentation.icon = RectangleActionsIcons.RectangleMenu
-    e.presentation.isEnabledAndVisible = RectangleAppService.getInstance().detected
+    e.presentation.isEnabledAndVisible = RectangleAppService.getInstance().detectedFlow.value
   }
 
   override fun actionPerformed(e: AnActionEvent) {
