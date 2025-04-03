@@ -44,7 +44,6 @@ object RectangleWindowActionsRegistraar {
     RectangleWindowActionsProvider.actionIds.forEach { actionManager.unregisterAction(it) }
   }
 
-  // TODO Try creating and registering actions as soon as rectangle is detected, might take a few seconds after retry
   fun createAndRegisterActions() {
     RectanglePluginApplicationService.getInstance().newChildScope()
       .launch(CoroutineName("RectangleActionsRegistraar")) {
@@ -54,6 +53,7 @@ object RectangleWindowActionsRegistraar {
           return@launch
         }
 
+        // Try creating and registering actions as soon as rectangle is detected, might take a few seconds after retry
         RectangleAppService.getInstance().detectedFlow
           .filter { it }
           .collectLatest {
