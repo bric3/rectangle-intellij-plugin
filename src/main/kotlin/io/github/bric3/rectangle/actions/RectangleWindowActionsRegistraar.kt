@@ -29,7 +29,7 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.launch
 
 object RectangleWindowActionsRegistraar {
-  private const val RECTANGLE_TITLE_BAR_ACTION_ID = "rectangle-TitleBar"
+  private const val RECTANGLE_TITLE_BAR_ACTION_ID = "rectangle.ShowRectangleWindowActions"
   private const val MAIN_TOOLBAR_RIGHT_GROUP_ID = "MainToolbarRight"
   private const val SEARCH_EVERYWHERE_ACTION_ID = "SearchEverywhere"
 
@@ -42,6 +42,7 @@ object RectangleWindowActionsRegistraar {
     RectangleWindowActionsProvider.actionIds.forEach { actionManager.unregisterAction(it) }
   }
 
+  // TODO Try creating and registering actions as soon as rectangle is detected, might take a few seconds after retry
   fun createAndRegisterActions() {
     RectanglePluginApplicationService.getInstance().newChildScope()
       .launch(CoroutineName("RectangleActionsRegistraar")) {
@@ -67,6 +68,7 @@ object RectangleWindowActionsRegistraar {
           logger.debug { "Registering action ${action.id}" }
           actionManager.registerAction(action.id, action, RectanglePlugin.PLUGIN_ID)
         }
+        registerActionInTitleBar()
       }
   }
 

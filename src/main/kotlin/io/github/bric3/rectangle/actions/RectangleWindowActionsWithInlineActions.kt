@@ -34,7 +34,9 @@ abstract class RectangleWindowActionsWithInlineActions(
     val actionManager = ActionManager.getInstance()
 
     val actionList = actionNames.mapNotNull {
-      actionManager.getAction(RectangleAction.actionId(it))
+      actionManager.getAction(RectangleAction.actionId(it))?.apply {
+        templatePresentation.putClientProperty(ActionUtil.ALWAYS_VISIBLE_INLINE_ACTION, true)
+      }
     }
     templatePresentation.putClientProperty(ActionUtil.INLINE_ACTIONS, actionList)
   }
@@ -42,29 +44,9 @@ abstract class RectangleWindowActionsWithInlineActions(
   override fun getActionUpdateThread() = BGT
 
   override fun update(e: AnActionEvent) {
-    // padding to give space to inline actions
-    val charWidth = IdeFocusManager.getGlobalInstance().lastFocusedFrame
-      ?.component
-      ?.getFontMetrics(JBFont.label())
-      ?.widths
-      ?.average()
-      ?.toInt()
-
-    val iconBorders = 3
-    e.presentation.text = originalText()?.padEnd(actionNames.size * JBUI.scale((charWidth ?: 6) + iconBorders))
+    // padding not necessary since the inlin actions are always shown
+    e.presentation.text = originalText()
     e.presentation.isEnabled = RectangleAppService.getInstance().detected
-
-    // 243 replace with the key from ActionUtil
-    ActionUtil::class.declaredMemberProperties
-      .firstOrNull { it.name == "ALWAYS_VISIBLE_INLINE_ACTION"}
-      ?.call()
-      ?.let {
-        @Suppress("UNCHECKED_CAST")
-        it as? Key<Boolean>
-      }?.let { key ->
-        e.presentation.putClientProperty(key, true)
-      }
-
   }
 
   override fun actionPerformed(e: AnActionEvent) {
