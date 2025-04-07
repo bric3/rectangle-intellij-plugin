@@ -13,11 +13,11 @@
      viewBox="0 0 192 128">
   <rect
           id="screen"
-          stroke="#AFB1B3" stroke-width="8"
+          stroke="#CED0D6" stroke-width="8"
           fill="none"
           x="2" y="2"
           rx="10"
           width="188" height="124"
   />
-  <rect id="top-left-quarter" x="4" y="4" width="92" height="60" rx="10" fill="#AFB1B3"/>
+  <rect id="top-left-quarter" x="4" y="4" width="92" height="60" rx="10" fill="#CED0D6"/>
 </svg>

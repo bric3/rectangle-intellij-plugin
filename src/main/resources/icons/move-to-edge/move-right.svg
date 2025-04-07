@@ -14,11 +14,11 @@
   <!-- Replace by width="16 height="16" -->
   <rect
           id="screen"
-          stroke="#6E6E6E" stroke-width="8"
+          stroke="#6C707E" stroke-width="8"
           fill="none"
           x="2" y="2"
           rx="10"
           width="188" height="124"
   />
-  <rect id="move-right" x="78" y="32" width="110" height="60" rx="10" fill="#6E6E6E"/>
+  <rect id="move-right" x="78" y="32" width="110" height="60" rx="10" fill="#6C707E"/>
 </svg>

@@ -13,11 +13,11 @@
      viewBox="0 0 192 128">
   <rect
           id="screen"
-          stroke="#AFB1B3" stroke-width="8"
+          stroke="#CED0D6" stroke-width="8"
           fill="none"
           x="2" y="2"
           rx="10"
           width="188" height="124"
   />
-  <path id="next-display" d="m 105,0 35,64 -35,64 H 43 L 78,64 43,0 Z" fill="#AFB1B3"/>
+  <path id="next-display" d="m 105,0 35,64 -35,64 H 43 L 78,64 43,0 Z" fill="#CED0D6"/>
 </svg>

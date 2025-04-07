@@ -8,7 +8,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import org.intellij.lang.annotations.Language
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.date
 import org.jetbrains.changelog.markdownToHTML
@@ -18,7 +17,6 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.models.ProductRelease
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("java")
@@ -246,23 +244,27 @@ abstract class GenerateDarkIconVariant @Inject constructor(project: Project) : D
       val svgContent = svgFile.bufferedReader().readText()
 
       // Light SVG
-      patchContent(svgContent, "#6E6E6E", "black").also {
+      patchContent(svgContent, "#6C707E", "black").also {
         svgFile.parentFile.resolve("${svgFile.nameWithoutExtension}.svg").writeText(it)
       }
       // Dark SVG
-      patchContent(svgContent, "#AFB1B3", "white").also {
+      patchContent(svgContent, "#CED0D6", "white").also {
         svgFile.parentFile.resolve("${svgFile.nameWithoutExtension}_dark.svg").writeText(it)
       }
     }
   }
 
   private fun patchContent(svgContent: String, screenColor: String, windowColor: String): String {
-    val screenShapeFillRegex = "(?s)<rect.+?id=\"(?<id>[^\"]+?)\".*?fill=\"(?<fill>[^\"]+?)\""
-    val screenShapeStrokeRegex = "(?s)<rect.+?id=\"(?<id>[^\"]+?)\".*?stroke=\"(?<stroke>[^\"]+?)\""
-    val otherShapesFillRegex =
-      "(?s)<(?<shape>rect|circle|ellipse|path|line|polyline|polygon).+?id=\"(?<id>[^\"]+?)\".*?fill=\"(?<fill>[^\"]+?)\""
-    val otherShapesStrokeRegex =
-      "(?s)<(?<shape>rect|circle|ellipse|path|line|polyline|polygon).+?id=\"(?<id>[^\"]+?)\".*?stroke=\"(?<stroke>[^\"]+?)\""
+    val fillAttribute = "fill"
+    val strokeAttribute = "stroke"
+    val placeholder = "%1\$s"
+    val screenPattern = """(?s)<rect.+?id="(?<id>[^"]+?)".*?$placeholder="(?<$placeholder>[^"]+?)""""
+    val screenShapeFillRegex = Regex(screenPattern.format(fillAttribute))
+    val screenShapeStrokeRegex = Regex(screenPattern.format(strokeAttribute))
+    val otherShapePattern =
+      """(?s)<(?<shape>rect|circle|ellipse|path|line|polyline|polygon).+?id="(?<id>[^"]+?)".*?$placeholder="(?<$placeholder>[^"]+?)""""
+    val otherShapesFillRegex = Regex(otherShapePattern.format(fillAttribute))
+    val otherShapesStrokeRegex = Regex(otherShapePattern.format(strokeAttribute))
     val buildString = buildString {
       append(svgContent)
       patchAllFillAttributeWith(
@@ -272,16 +274,16 @@ abstract class GenerateDarkIconVariant @Inject constructor(project: Project) : D
       )
       patchAllFillAttributeWith(
         regex = screenShapeStrokeRegex,
-        replacement = "stroke" to screenColor,
+        replacement = strokeAttribute to screenColor,
         include = mapOf("id" to setOf("screen"))
       )
       patchAllFillAttributeWith(
         regex = otherShapesFillRegex,
-        replacement = "fill" to windowColor,
+        replacement = fillAttribute to windowColor,
         include = mapOf("shape" to setOf("rect", "circle", "ellipse", "path", "line", "polyline", "polygon")),
         exclude = mapOf(
           "id" to setOf("screen"),
-          "fill" to setOf("none")
+          fillAttribute to setOf("none")
         )
       )
       patchAllFillAttributeWith(
@@ -290,7 +292,7 @@ abstract class GenerateDarkIconVariant @Inject constructor(project: Project) : D
         include = mapOf("shape" to setOf("rect", "circle", "ellipse", "path", "line", "polyline", "polygon")),
         exclude = mapOf(
           "id" to setOf("screen"),
-          "stroke" to setOf("none")
+          strokeAttribute to setOf("none")
         )
       )
     }
@@ -304,14 +306,13 @@ abstract class GenerateDarkIconVariant @Inject constructor(project: Project) : D
    * when patching a document it does because it may have been manually ordered by a human.
    */
   private fun StringBuilder.patchAllFillAttributeWith(
-    @Language("RegExp")
-    regex: String,
+    regex: Regex,
     replacement: Pair<String, String>,
     include: Map<String, Set<String>> = emptyMap(),
     exclude: Map<String, Set<String>> = emptyMap(),
   ) {
 
-    Regex(regex)
+    regex
       .findAll(this)
       .mapNotNull {
         val containsGroupValue: (Map.Entry<String, Set<String>>) -> Boolean = containsPredicate@{ (k, valueSet) ->

@@ -13,13 +13,13 @@
      viewBox="0 0 192 128">
   <rect
           id="screen"
-          stroke="#AFB1B3" stroke-width="8"
+          stroke="#CED0D6" stroke-width="8"
           fill="none"
           x="2" y="2"
           rx="10"
           width="188" height="124"
   />
-  <rect id="window-back" x="20" y="20" width="100" height="60" rx="10" fill="none" stroke="#AFB1B3" stroke-width="8"/>
-  <rect id="window-middle" x="36" y="36" width="100" height="60" rx="10" fill="none" stroke="#AFB1B3" stroke-width="8"/>
-  <rect id="window-front" x="52" y="52" width="100" height="60" rx="10" fill="#AFB1B3" stroke="#AFB1B3" stroke-width="8"/>
+  <rect id="window-back" x="20" y="20" width="100" height="60" rx="10" fill="none" stroke="#CED0D6" stroke-width="8"/>
+  <rect id="window-middle" x="36" y="36" width="100" height="60" rx="10" fill="none" stroke="#CED0D6" stroke-width="8"/>
+  <rect id="window-front" x="52" y="52" width="100" height="60" rx="10" fill="#CED0D6" stroke="#CED0D6" stroke-width="8"/>
 </svg>

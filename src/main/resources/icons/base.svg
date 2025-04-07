@@ -14,7 +14,7 @@
   <!-- Replace by width="16 height="16" -->
   <rect
           id="screen"
-          stroke="#6E6E6E" stroke-width="8"
+          stroke="#6C707E" stroke-width="8"
           fill="none"
           x="2" y="2"
           rx="10"
@@ -22,75 +22,75 @@
   />
 
   <!-- Halves -->
-  <!--  <rect id="top-half" x="4" y="4" width="184" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="bottom-half" x="4" y="64" width="184" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="left-half" x="4" y="4" width="92" height="120" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="right-half" x="96" y="4" width="92" height="120" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="center-half" x="50" y="4" width="92" height="120" rx="10" fill="#6E6E6E"/>-->
+  <!--  <rect id="top-half" x="4" y="4" width="184" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="bottom-half" x="4" y="64" width="184" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="left-half" x="4" y="4" width="92" height="120" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="right-half" x="96" y="4" width="92" height="120" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="center-half" x="50" y="4" width="92" height="120" rx="10" fill="#6C707E"/>-->
 
   <!-- Corners -->
-  <!--  <rect id="top-left-quarter" x="4" y="4" width="92" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="top-right-quarter" x="96" y="4" width="92" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="bottom-left-quarter" x="4" y="64" width="92" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="bottom-right-quarter" x="96" y="64" width="92" height="60" rx="10" fill="#6E6E6E"/>-->
+  <!--  <rect id="top-left-quarter" x="4" y="4" width="92" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="top-right-quarter" x="96" y="4" width="92" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="bottom-left-quarter" x="4" y="64" width="92" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="bottom-right-quarter" x="96" y="64" width="92" height="60" rx="10" fill="#6C707E"/>-->
 
   <!-- Thirds -->
-  <!--  <rect id="first-third" x="4" y="4" width="60" height="120" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="center-third" x="66" y="4" width="60" height="120" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="last-third" x="128" y="4" width="60" height="120" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="first-two-thirds" x="4" y="4" width="120" height="120" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="last-two-thirds" x="68" y="4" width="120" height="120" rx="10" fill="#6E6E6E"/>-->
+  <!--  <rect id="first-third" x="4" y="4" width="60" height="120" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="center-third" x="66" y="4" width="60" height="120" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="last-third" x="128" y="4" width="60" height="120" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="first-two-thirds" x="4" y="4" width="120" height="120" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="last-two-thirds" x="68" y="4" width="120" height="120" rx="10" fill="#6C707E"/>-->
 
-  <!--  <rect id="top-left-two-thirds" x="4" y="4" width="120" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="bottom-left-thirds" x="4" y="64" width="120" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="top-right-two-thirds" x="68" y="4" width="120" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="bottom-right-two-thirds" x="68" y="64" width="120" height="60" rx="10" fill="#6E6E6E"/>-->
+  <!--  <rect id="top-left-two-thirds" x="4" y="4" width="120" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="bottom-left-thirds" x="4" y="64" width="120" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="top-right-two-thirds" x="68" y="4" width="120" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="bottom-right-two-thirds" x="68" y="64" width="120" height="60" rx="10" fill="#6C707E"/>-->
 
   <!-- Fourth -->
-  <!--  <rect id="first-fourth" x="4" y="4" width="46" height="120" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="second-fourth" x="50" y="4" width="46" height="120" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="third-fourth" x="96" y="4" width="46" height="120" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="last-fourth" x="142" y="4" width="46" height="120" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="first-three-fourths" x="4" y="4" width="138" height="120" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="last-three-fourths" x="50" y="4" width="138" height="120" rx="10" fill="#6E6E6E"/>-->
+  <!--  <rect id="first-fourth" x="4" y="4" width="46" height="120" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="second-fourth" x="50" y="4" width="46" height="120" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="third-fourth" x="96" y="4" width="46" height="120" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="last-fourth" x="142" y="4" width="46" height="120" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="first-three-fourths" x="4" y="4" width="138" height="120" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="last-three-fourths" x="50" y="4" width="138" height="120" rx="10" fill="#6C707E"/>-->
 
   <!-- Sixth -->
-  <!--  <rect id="top-left-sixth" x="4" y="4" width="60" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="top-center-sixth" x="66" y="4" width="60" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="top-right-sixth" x="128" y="4" width="60" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="bottom-left-sixth" x="4" y="64" width="60" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="bottom-center-sixth" x="66" y="64" width="60" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="bottom-right-sixth" x="128" y="64" width="60" height="60" rx="10" fill="#6E6E6E"/>-->
+  <!--  <rect id="top-left-sixth" x="4" y="4" width="60" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="top-center-sixth" x="66" y="4" width="60" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="top-right-sixth" x="128" y="4" width="60" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="bottom-left-sixth" x="4" y="64" width="60" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="bottom-center-sixth" x="66" y="64" width="60" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="bottom-right-sixth" x="128" y="64" width="60" height="60" rx="10" fill="#6C707E"/>-->
 
   <!-- Move to edge -->
-  <!--  <rect id="move-up" x="42" y="4" width="110" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="move-down" x="42" y="64" width="110" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="move-left" x="4" y="32" width="60" height="60" rx="10" fill="#6E6E6E"/>-->
-  <!--  <rect id="move-right" x="78" y="32" width="110" height="60" rx="10" fill="#6E6E6E"/>-->
+  <!--  <rect id="move-up" x="42" y="4" width="110" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="move-down" x="42" y="64" width="110" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="move-left" x="4" y="32" width="60" height="60" rx="10" fill="#6C707E"/>-->
+  <!--  <rect id="move-right" x="78" y="32" width="110" height="60" rx="10" fill="#6C707E"/>-->
 
   <!-- Display -->
-  <!--  <path id="previous-display" d="M 78 0 l -35 64 l 35 64 l 62 0 l -35 -64 l 35 -64 l -62 0 Z" fill="#6E6E6E"/>-->
-  <!--  <path id="next-display" d="m 105,0 35,64 -35,64 H 43 L 78,64 43,0 Z" fill="#6E6E6E"/>-->
+  <!--  <path id="previous-display" d="M 78 0 l -35 64 l 35 64 l 62 0 l -35 -64 l 35 -64 l -62 0 Z" fill="#6C707E"/>-->
+  <!--  <path id="next-display" d="m 105,0 35,64 -35,64 H 43 L 78,64 43,0 Z" fill="#6C707E"/>-->
 
 
   <!-- Maximize -->
-  <!--  <rect id="maximize" x="4" y="4" width="184" height="120" rx="10" fill="#6E6E6E"/>-->
+  <!--  <rect id="maximize" x="4" y="4" width="184" height="120" rx="10" fill="#6C707E"/>-->
 
   <!-- Almost Maximize -->
-  <!--  <rect id="almost-maximize" x="10" y="10" width="172" height="108" rx="10" fill="#6E6E6E"/>-->
+  <!--  <rect id="almost-maximize" x="10" y="10" width="172" height="108" rx="10" fill="#6C707E"/>-->
 
   <!-- Maximize Height -->
-  <!--  <rect id="maximize-height" x="36" y="4" width="90" height="120" rx="10" fill="#6E6E6E"/>-->
+  <!--  <rect id="maximize-height" x="36" y="4" width="90" height="120" rx="10" fill="#6C707E"/>-->
 
   <!-- Smaller (like a minus sign) -->
-  <!--  <rect id="smaller" x="51" y="57" width="90" height="14" rx="7" fill="#6E6E6E"/>-->
+  <!--  <rect id="smaller" x="51" y="57" width="90" height="14" rx="7" fill="#6C707E"/>-->
 
   <!-- Larger  (like a plus sign) -->
-  <!--  <rect id="larger-horizontal-bar" x="51" y="57" width="90" height="14" rx="7" fill="#6E6E6E"/>-->
-  <!--  <rect id="larger-vertical-bar" x="89" y="19" width="14" height="90" rx="7" fill="#6E6E6E"/>-->
+  <!--  <rect id="larger-horizontal-bar" x="51" y="57" width="90" height="14" rx="7" fill="#6C707E"/>-->
+  <!--  <rect id="larger-vertical-bar" x="89" y="19" width="14" height="90" rx="7" fill="#6C707E"/>-->
 
   <!-- Centre -->
-  <!--  <rect id="center" x="34" y="30" width="124" height="64" rx="10" fill="#6E6E6E"/>-->
+  <!--  <rect id="center" x="34" y="30" width="124" height="64" rx="10" fill="#6C707E"/>-->
 
   <!-- Restore -->
   <!--  <path d="m 64.907901,30.440548-->
@@ -106,12 +106,12 @@
   <!--        l 4.725401,4.725401-->
   <!--        c 2.325491,2.325492 2.325491,6.102091 0,8.427582 -2.325493,2.325493 -6.102092,2.325493 -8.427585,0-->
   <!--        L 50.024754,53.751281-->
-  <!--        c -2.325492,-2.325493 -2.325492,-6.102091 0,-8.427583 z" fill="#6E6E6E"/>-->
+  <!--        c -2.325492,-2.325493 -2.325492,-6.102091 0,-8.427583 z" fill="#6C707E"/>-->
 
   <!-- Cascade app windows -->
   <rect id="window-back" x="20" y="20" width="100" height="60" rx="10" fill="none" stroke="black" stroke-width="8"/>
   <rect id="window-middle" x="36" y="36" width="100" height="60" rx="10" fill="none" stroke="black" stroke-width="8"/>
-  <rect id="window-front" x="52" y="52" width="100" height="60" rx="10" fill="#6E6E6E" stroke="black" stroke-width="8"/>
+  <rect id="window-front" x="52" y="52" width="100" height="60" rx="10" fill="#6C707E" stroke="black" stroke-width="8"/>
 
   
 </svg>
