@@ -14,7 +14,7 @@
   <!-- Replace by width="16 height="16" -->
   <rect
           id="screen"
-          stroke="#AFB1B3" stroke-width="4"
+          stroke="#AFB1B3" stroke-width="8"
           fill="none"
           x="2" y="2"
           rx="10"
