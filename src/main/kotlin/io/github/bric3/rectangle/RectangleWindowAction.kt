@@ -12,10 +12,10 @@ package io.github.bric3.rectangle
 
 import com.intellij.openapi.util.text.StringUtil
 import io.github.bric3.rectangle.RectangleBundle.messagePointer
-import io.github.bric3.rectangle.RectangleWindowActionName.Category
+import io.github.bric3.rectangle.RectangleWindowAction.Category
 
 @Suppress("EnumEntryName")
-enum class RectangleWindowActionName {
+enum class RectangleWindowAction {
   `left-half`, `right-half`, `center-half`, `top-half`, `bottom-half`,
   `top-left`, `top-right`, `bottom-left`, `bottom-right`,
   `first-third`, `center-third`, `last-third`,
@@ -39,7 +39,7 @@ enum class RectangleWindowActionName {
   fun toId() = StringUtil.toTitleCase(name).replace("-", "")
   fun description() = messagePointer("rectangle.action.${name}.description")
 
-  enum class Category(vararg val actionNames: RectangleWindowActionName) {
+  enum class Category(vararg val actionNames: RectangleWindowAction) {
     Halves(`left-half`, `right-half`, `center-half`, `top-half`, `bottom-half`),
     Corners(`top-left`, `top-right`, `bottom-left`, `bottom-right`),
     Thirds(`first-two-thirds`, `last-two-thirds`, `first-third`, `center-third`, `last-third`),
@@ -76,5 +76,5 @@ enum class RectangleWindowActionName {
 }
 
 private val orientableCategories = setOf(Category.Thirds, Category.Fourths, Category.Sixths, Category.Ninths, Category.Eighths)
-val RectangleWindowActionName.isOrientable
+val RectangleWindowAction.isOrientable
   get() = orientableCategories.any { it.actionNames.contains(this) }

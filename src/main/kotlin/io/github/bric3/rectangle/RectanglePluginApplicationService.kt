@@ -15,21 +15,49 @@ import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import fleet.util.cast
 import icons.RectangleActionsIcons
 import io.github.bric3.rectangle.RectangleBundle.message
+import io.github.bric3.rectangle.util.getAppBundleId
+import io.github.bric3.rectangle.util.retry
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.job
+import kotlinx.coroutines.withContext
+import java.nio.file.Path
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 
-
 @Service(Service.Level.APP)
 class RectanglePluginApplicationService(private val pluginAppScope: CoroutineScope) : Disposable {
+  val ideBundleId = flow {
+    val ideBundleId = withContext(Dispatchers.IO) {
+      val homePath = PathManager.getHomePath(true)
+      retry { getAppBundleId(Path.of(homePath)) }
+    }
+    
+    // In sandboxed IDE, the IDE is extracted in a way that `mdls` cannot find the bundle id
+    emit(
+      when (ideBundleId) {
+        "(null)" -> null
+        else -> ideBundleId
+      }
+    )
+  }
+    .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    .shareIn(pluginAppScope, SharingStarted.Lazily, replay = 1)
+
   fun newChildScope(
     context: CoroutineContext = EmptyCoroutineContext,
     supervisor: Boolean = true,

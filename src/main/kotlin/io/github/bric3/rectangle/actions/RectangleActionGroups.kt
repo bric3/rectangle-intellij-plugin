@@ -11,20 +11,18 @@
 package io.github.bric3.rectangle.actions
 
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.ActionUpdateThread.BGT
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.DumbAware
-import io.github.bric3.rectangle.RectangleWindowActionName
-import io.github.bric3.rectangle.RectangleWindowActionName.*
-import io.github.bric3.rectangle.RectangleWindowActionName.`bottom-half`
-import io.github.bric3.rectangle.RectangleBundle.message
+import io.github.bric3.rectangle.RectangleWindowAction
+import io.github.bric3.rectangle.RectangleWindowAction.*
+import io.github.bric3.rectangle.RectangleWindowAction.`bottom-half`
 import io.github.bric3.rectangle.actions.RectangleActionUtil.patchActionText
 
-abstract class RectangleActionGroup(private val actionNames: List<RectangleWindowActionName>) : DefaultActionGroup(), DumbAware {
-  constructor(vararg actionNames: RectangleWindowActionName) : this(actionNames.toList())
+abstract class RectangleActionGroup(private val actionNames: List<RectangleWindowAction>) : DefaultActionGroup(), DumbAware {
+  constructor(vararg actionNames: RectangleWindowAction) : this(actionNames.toList())
   override fun getActionUpdateThread() = BGT
 
   override fun update(e: AnActionEvent) {

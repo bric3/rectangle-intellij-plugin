@@ -10,7 +10,7 @@
 
 package io.github.bric3.rectangle.actions
 
-import io.github.bric3.rectangle.RectangleWindowActionName
+import io.github.bric3.rectangle.RectangleWindowAction
 
 /**
  * > Open the URL `rectangle://execute-action?name=[name]`. Do not activate Rectangle if possible.
@@ -36,8 +36,8 @@ import io.github.bric3.rectangle.RectangleWindowActionName
 object RectangleWindowActionsProvider {
 
   fun createActions(): List<RectangleAction> {
-    return RectangleWindowActionName.entries.map { RectangleAction(it) }
+    return RectangleWindowAction.entries.map { RectangleAction(it) }
   }
 
-  val actionIds = RectangleWindowActionName.entries.map { RectangleAction.actionId(it) }
+  val actionIds = RectangleWindowAction.entries.map { RectangleAction.actionId(it) }
 }

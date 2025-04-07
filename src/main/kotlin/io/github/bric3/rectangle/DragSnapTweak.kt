@@ -14,7 +14,6 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
-import io.github.bric3.rectangle.DefaultsOp.ReadOp
 import io.github.bric3.rectangle.DefaultsOp.SettingsKey
 import io.github.bric3.rectangle.DragSnapTweak.IgnoreDragSnapToo
 import io.github.bric3.rectangle.RectangleBundle.message
@@ -23,23 +22,35 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 object DragSnapTweak {
+  /**
+   * Since Rectangle, ignoring an app, actually ignores Rectangle shortcuts when that app is
+   * focused. However, dragging and snapping are also disabled. This function suggests the user
+   * to both enable the drag snap feature for ignored apps, and ignore the running IDE.
+   */
   fun suggestEnablingDragSnapWhenAppIgnored() {
-    if (!RectangleAppService.getInstance().detectedFlow.value) {
-      return
-    }
-
     RectanglePluginApplicationService.getInstance().newChildScope().launch {
-      RectangleAppService.getInstance().detectedFlow.filter { it }.collectLatest {
-        // TODO use 0.86
-        if (RectangleAppService.getInstance().rectangleDefaults(ReadOp(IgnoreDragSnapToo)).value != false) {
-          RectanglePluginApplicationService.getInstance().notifyUser(
-            message("rectangle.notification.drag-snap-ignored.title"),
-            NotificationType.INFORMATION,
-          ) {
-            addAction(AllowDragSnapForIgnoredAppsAction(this))
-          }
+      RectangleAppService.getInstance().detectedFlow
+        .filter { it }
+        .collectLatest {
+          ignoreIdeInRectangle()
+        }
+    }
+  }
+
+  private suspend fun ignoreIdeInRectangle() {
+    RectanglePluginApplicationService.getInstance().ideBundleId.collectLatest {
+      val ignoreDragSnapToo = RectangleAppService.getInstance().rectangleDefaults(DefaultsOp.ReadOp(IgnoreDragSnapToo))
+      if (ignoreDragSnapToo.value != false) {
+        RectanglePluginApplicationService.getInstance().notifyUser(
+          message("rectangle.notification.drag-snap-ignored.title"),
+          NotificationType.INFORMATION,
+        ) {
+          addAction(AllowDragSnapForIgnoredAppsAction(this, it))
         }
       }
+      // TODO Auto ignore ide?
+      //  Or detect if the IDE is already ignored and ask.
+      //  May need support from Rectangle.
     }
   }
 
@@ -80,20 +91,30 @@ object DragSnapTweak {
   }
 }
 
-class AllowDragSnapForIgnoredAppsAction(private val notification: Notification) : DumbAwareAction(message("rectangle.notification.drag-snap-ignored.suggested-action.enable")) {
+class AllowDragSnapForIgnoredAppsAction(
+  private val notification: Notification,
+  private val ideBundleIdentifier: String?
+) : DumbAwareAction(message("rectangle.notification.drag-snap-ignored.suggested-action.enable")) {
   override fun actionPerformed(e: AnActionEvent) {
     RectanglePluginApplicationService.getInstance().newChildScope().launch {
-      RectangleAppService.getInstance().rectangleDefaults(
-        DefaultsOp.WriteOp(IgnoreDragSnapToo, false)
-      ).run {
-        if (isSuccessful) {
-          notification.expire()
+      if (ideBundleIdentifier != null) {
+        RectangleAppService.getInstance().runRectangleUrlTask(
+          RectangleTask.`ignore-app`,
+          mapOf("app-bundle-id" to ideBundleIdentifier)
+        )
+      }
 
-          RectanglePluginApplicationService.getInstance().notifyUser(
-            message("rectangle.notification.drag-snap-ignored.next-step.enabled"),
-            NotificationType.INFORMATION
-          )
-        }
+      val setRectangleDefaults = RectangleAppService.getInstance().rectangleDefaults(
+        DefaultsOp.WriteOp(IgnoreDragSnapToo, false)
+      )
+
+      if (setRectangleDefaults.isSuccessful) {
+        notification.expire()
+
+        RectanglePluginApplicationService.getInstance().notifyUser(
+          message("rectangle.notification.drag-snap-ignored.next-step.enabled"),
+          NotificationType.INFORMATION
+        )
       }
     }
   }

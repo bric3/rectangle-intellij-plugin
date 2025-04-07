@@ -16,14 +16,14 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAwareAction
 import io.github.bric3.rectangle.RectangleAppService
-import io.github.bric3.rectangle.RectangleWindowActionName
+import io.github.bric3.rectangle.RectangleWindowAction
 import io.github.bric3.rectangle.actions.RectangleActionUtil.originalText
 
 abstract class RectangleWindowActionsWithInlineActions(
-  private val actionNames: List<RectangleWindowActionName>
+  private val actionNames: List<RectangleWindowAction>
 ) : DumbAwareAction() {
 
-  constructor(category: RectangleWindowActionName.Category) : this(category.actionNames.toList())
+  constructor(category: RectangleWindowAction.Category) : this(category.actionNames.toList())
 
   init {
     val actionManager = ActionManager.getInstance()
@@ -50,33 +50,33 @@ abstract class RectangleWindowActionsWithInlineActions(
 }
 
 class RectangleHalvesActions : RectangleWindowActionsWithInlineActions(
-  RectangleWindowActionName.Category.Halves
+  RectangleWindowAction.Category.Halves
 )
 
 class RectangleCornersActions : RectangleWindowActionsWithInlineActions(
-  RectangleWindowActionName.Category.Corners
+  RectangleWindowAction.Category.Corners
 )
 
 class RectangleThirdsActions : RectangleWindowActionsWithInlineActions(
-  RectangleWindowActionName.Category.Thirds
+  RectangleWindowAction.Category.Thirds
 )
 
 class RectangleGeneralActions : RectangleWindowActionsWithInlineActions(
-  RectangleWindowActionName.Category.General
+  RectangleWindowAction.Category.General
 )
 
 class RectangleDisplayActions : RectangleWindowActionsWithInlineActions(
-  RectangleWindowActionName.Category.Display
+  RectangleWindowAction.Category.Display
 )
 
 class RectangleMovesActions : RectangleWindowActionsWithInlineActions(
-  RectangleWindowActionName.Category.Move
+  RectangleWindowAction.Category.Move
 )
 
 class RectangleFourthsActions : RectangleWindowActionsWithInlineActions(
-  RectangleWindowActionName.Category.Fourths
+  RectangleWindowAction.Category.Fourths
 )
 
 class RectangleSixthsActions : RectangleWindowActionsWithInlineActions(
-  RectangleWindowActionName.Category.Sixths
+  RectangleWindowAction.Category.Sixths
 )

@@ -18,16 +18,16 @@ import com.intellij.openapi.project.DumbAwareAction
 import icons.RectangleActionsIcons
 import io.github.bric3.rectangle.LastIdeFrameScreenOrientationDetection
 import io.github.bric3.rectangle.RectangleAppService
-import io.github.bric3.rectangle.RectangleWindowActionName
+import io.github.bric3.rectangle.RectangleWindowAction
 import io.github.bric3.rectangle.RectangleBundle.message
 import io.github.bric3.rectangle.RectangleBundle.messagePointer
 import io.github.bric3.rectangle.isOrientable
 import io.github.bric3.rectangle.util.RotatedIcon
 
 /**
- * Open the URL `rectangle://execute-action?name=[rectangleWindowActionName]`. Do not activate Rectangle if possible.
+ * Open the URL `rectangle://execute-action?name=[rectangleWindowAction]`. Do not activate Rectangle if possible.
  *
- * Available values for `[rectangleWindowActionName]`:
+ * Available values for `[rectangleWindowAction]`:
  *   * `left-half`, `right-half`, `center-half`, `top-half`, `bottom-half`,
  *   * `top-left`, `top-right`, `bottom-left`, `bottom-right`,
  *   * `first-third`, `center-third`, `last-third`,
@@ -43,12 +43,12 @@ import io.github.bric3.rectangle.util.RotatedIcon
  *   * `top-left-eighth`, `top-center-left-eighth`, `top-center-right-eighth`, `top-right-eighth`, `bottom-left-eighth`, `bottom-center-left-eighth`, `bottom-center-right-eighth`, `bottom-right-eighth`,
  *   * `tile-all`, `cascade-all`, `cascade-active-app`
  */
-class RectangleAction(private val rectangleWindowActionName: RectangleWindowActionName) : DumbAwareAction(
-  messagePointer("rectangle.action.text-with-prefix", rectangleWindowActionName.toTitleCase()),
-  rectangleWindowActionName.description(),
-  { RectangleActionsIcons.findIcon(rectangleWindowActionName.name) }
+class RectangleAction(private val rectangleWindowAction: RectangleWindowAction) : DumbAwareAction(
+  messagePointer("rectangle.action.text-with-prefix", rectangleWindowAction.toTitleCase()),
+  rectangleWindowAction.description(),
+  { RectangleActionsIcons.findIcon(rectangleWindowAction.name) }
 ) {
-  val id = actionId(rectangleWindowActionName)
+  val id = actionId(rectangleWindowAction)
 
   init {
     isEnabledInModalContext = true
@@ -59,11 +59,11 @@ class RectangleAction(private val rectangleWindowActionName: RectangleWindowActi
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = true
     e.presentation.text = when (e.place) {
-      ActionPlaces.ACTION_SEARCH -> message("rectangle.action.text-with-prefix", rectangleWindowActionName.toTitleCase())
-      else -> rectangleWindowActionName.toTitleCase()
+      ActionPlaces.ACTION_SEARCH -> message("rectangle.action.text-with-prefix", rectangleWindowAction.toTitleCase())
+      else -> rectangleWindowAction.toTitleCase()
     }
 
-    if (rectangleWindowActionName.isOrientable) {
+    if (rectangleWindowAction.isOrientable) {
       val angle = if(LastIdeFrameScreenOrientationDetection.isPortrait()) 90.0 else 0.0
       e.presentation.icon = when (val icon = e.presentation.icon) {
         is RotatedIcon -> icon.apply { degrees = angle }
@@ -73,12 +73,12 @@ class RectangleAction(private val rectangleWindowActionName: RectangleWindowActi
   }
 
   override fun actionPerformed(p0: AnActionEvent) {
-    RectangleAppService.getInstance().runRectangleUrlAction(rectangleWindowActionName.name)
+    RectangleAppService.getInstance().runRectangleUrlAction(rectangleWindowAction)
   }
 
   companion object {
     private val logger = logger<RectangleAction>()
     const val ACTION_PREFIX = "rectangle"
-    fun actionId(rectangleWindowActionName: RectangleWindowActionName) = "$ACTION_PREFIX.${rectangleWindowActionName.toId()}"
+    fun actionId(rectangleWindowAction: RectangleWindowAction) = "$ACTION_PREFIX.${rectangleWindowAction.toId()}"
   }
 }

@@ -10,11 +10,9 @@
 
 package io.github.bric3.rectangle
 
-import com.github.weisj.jsvg.cs
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessRunner
 import com.intellij.execution.process.OSProcessHandler
-import com.intellij.execution.process.ProcessOutput
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationType.ERROR
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -25,17 +23,15 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import io.github.bric3.rectangle.RectangleBundle.message
 import io.github.bric3.rectangle.util.Command
+import io.github.bric3.rectangle.util.MdlsCommand
+import io.github.bric3.rectangle.util.getAppBundleId
 import io.github.bric3.rectangle.util.retry
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -47,9 +43,6 @@ import kotlin.time.Duration.Companion.hours
 @Service(Service.Level.APP)
 class RectangleAppService(private val cs: CoroutineScope) {
   private val detectedRectangleVersion = MutableSharedFlow<String?>()
-
-  // private val rectanglePathFlow : StateFlow<Path?>
-  // private val versionFlow : StateFlow<String?>
 
   val detectedFlow: StateFlow<Boolean> = detectedRectangleVersion
     .map { it != null }
@@ -70,17 +63,6 @@ class RectangleAppService(private val cs: CoroutineScope) {
         delay(1.hours)
       }
     }
-
-    // rectanglePathFlow = MutableStateFlow(detectRectangle())
-    // versionFlow = MutableStateFlow(detectRectangleVersion(rectanglePathFlow.value))
-    // cs.launch {
-    //   while (true) {
-    //     delay(1.hours)
-    //     rectanglePathFlow.value = detectRectangle()
-    //     versionFlow.value = detectRectangleVersion(rectanglePathFlow.value)
-    //   }
-    // }
-    // notifyUserOnceIfMissingRectangle()
   }
 
   private fun notifyUserOnceIfMissingRectangle() {
@@ -157,11 +139,11 @@ class RectangleAppService(private val cs: CoroutineScope) {
         null
       },
       onProcessFailure = {
-          logger.error("Failed to detect Rectangle version: $stderr")
-          RectanglePluginApplicationService.getInstance()
-            .notifyUser(message("rectangle.action.failure.detect-version.text"), ERROR)
+        logger.error("Failed to detect Rectangle version: $stderr")
+        RectanglePluginApplicationService.getInstance()
+          .notifyUser(message("rectangle.action.failure.detect-version.text"), ERROR)
         null
-     },
+      },
       onProcessSuccess = { stdout.trim() }
     ).run()
   }
@@ -190,65 +172,54 @@ class RectangleAppService(private val cs: CoroutineScope) {
     return defaultsOp
   }
 
-  fun runRectangleUrlAction(rectangleActionName: String) {
+  fun runRectangleUrlAction(rectangleAction: RectangleWindowAction) {
+    runRectangleUrl(ExecuteType.action, rectangleAction.name)
+  }
+
+  fun runRectangleUrlTask(rectangleTask: RectangleTask, args: Map<String, String>) {
+    runRectangleUrl(ExecuteType.task, rectangleTask.name, args)
+  }
+
+  @Suppress("EnumEntryName")
+  private enum class ExecuteType { action, task }
+
+  private fun runRectangleUrl(executeType: ExecuteType, name: String, args: Map<String, String> = emptyMap()) {
     cs.launch(CoroutineName("runRectangleUrlAction")) {
+      val rectangleUrl = buildString {
+        append("rectangle://execute-")
+        append(executeType)
+        append("?name=")
+        append(name)
+        args.forEach { k, v ->
+          append("&")
+          append(k)
+          append("=")
+          append(v)
+        }
+      }
+
       val commandLine = GeneralCommandLine().apply {
         exePath = "/usr/bin/open"
         addParameter("-g")
-        addParameter("rectangle://execute-action?name=$rectangleActionName")
+        addParameter(rectangleUrl)
       }
 
       val handler = try {
         OSProcessHandler(commandLine)
       } catch (e: Exception) {
-        logger.error("Failed to run Rectangle action $rectangleActionName", e)
+        logger.error("Failed to run Rectangle url: $rectangleUrl", e)
         RectanglePluginApplicationService.getInstance()
-          .notifyUser(message("rectangle.action.failure.run.text", rectangleActionName), ERROR)
+          .notifyUser(message("rectangle.action.failure.run.text", executeType, name), ERROR)
         return@launch
       }
 
       val runner = CapturingProcessRunner(handler)
       val output = runner.runProcess(1000)
       if (output.isTimeout || output.exitCode != 0) {
-        logger.error("Failed to run Rectangle action $rectangleActionName: ${output.stderr}")
+        logger.error("Failed to run Rectangle action $name: ${output.stderr}")
         RectanglePluginApplicationService.getInstance()
-          .notifyUser(message("rectangle.action.failure.run.text", rectangleActionName), ERROR)
+          .notifyUser(message("rectangle.action.failure.run.text", executeType, name), ERROR)
       }
-    }
-  }
-
-  // Runs
-  // mdls -attr kMDItemCFBundleIdentifier -raw ....app
-  fun getAppBundleId(path: Path) = MdlsCommand(
-    appPath = path.toString(),
-    attributeName = "kMDItemCFBundleIdentifier",
-    onProcessExecutionException = {
-      logger.error("Failed to get bundle id for $path", it)
-      null
-    },
-    onProcessFailure = {
-      logger.error("Failed to get bundle id for $path: $stderr")
-      null
-    },
-    onProcessSuccess = { stdout.trim() }
-  ).run()
-
-  class MdlsCommand<T>(
-    private val appPath: String,
-    private val attributeName: String,
-    onProcessExecutionException: (Exception) -> T,
-    onProcessFailure: ProcessOutput.() -> T,
-    onProcessSuccess: ProcessOutput.() -> T,
-  ) : Command<T>(
-    onProcessExecutionException,
-    onProcessFailure,
-    onProcessSuccess
-  ) {
-    override fun GeneralCommandLine.commandLine() {
-      exePath = "/usr/bin/mdls"
-      addParameters("-attr", attributeName)
-      addParameter("-raw")
-      addParameter(appPath)
     }
   }
 

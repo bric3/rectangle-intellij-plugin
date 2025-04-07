@@ -12,9 +12,14 @@ package io.github.bric3.rectangle
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.extensions.PluginId
 
 object RectanglePlugin {
+  /**
+   * Global plugin logger, for util functions.
+   */
+  val logger = thisLogger()
   const val PLUGIN_ID_STR = "io.github.bric3.rectangle"
   val PLUGIN_ID = PluginId.getId(PLUGIN_ID_STR)
   private val descriptor: IdeaPluginDescriptor = PluginManagerCore.getPlugin(PLUGIN_ID)!!
