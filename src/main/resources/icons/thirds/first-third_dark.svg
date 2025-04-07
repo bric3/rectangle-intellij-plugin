@@ -14,10 +14,10 @@
   <rect
           id="screen"
           stroke="#AFB1B3" stroke-width="4"
-          fill="#AFB1B3"
+          fill="none"
           x="2" y="2"
           rx="10"
           width="188" height="124"
   />
-  <rect id="first-third" x="4" y="4" width="60" height="120" rx="10" fill="white"/>
+  <rect id="first-third" x="4" y="4" width="60" height="120" rx="10" fill="#AFB1B3"/>
 </svg>

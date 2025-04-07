@@ -50,8 +50,9 @@
               class="io.github.bric3.rectangle.actions.RectangleMovesActions"/>
       <action id="rectangle.RectangleFourthsActions"
               class="io.github.bric3.rectangle.actions.RectangleFourthsActions"/>
-      <action id="rectangle.RectangleSixthsActions"
-              class="io.github.bric3.rectangle.actions.RectangleSixthsActions"/>
+      <!-- Rarely used, and no icons at the moment -->
+      <!-- <action id="rectangle.RectangleSixthsActions" -->
+      <!--         class="io.github.bric3.rectangle.actions.RectangleSixthsActions"/> -->
     </group>
   </actions>
 </idea-plugin>

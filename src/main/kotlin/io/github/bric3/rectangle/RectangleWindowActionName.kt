@@ -42,7 +42,7 @@ enum class RectangleWindowActionName {
   enum class Category(vararg val actionNames: RectangleWindowActionName) {
     Halves(`left-half`, `right-half`, `center-half`, `top-half`, `bottom-half`),
     Corners(`top-left`, `top-right`, `bottom-left`, `bottom-right`),
-    Thirds(`first-third`, `center-third`, `last-third`, `first-two-thirds`, `last-two-thirds`),
+    Thirds(`first-two-thirds`, `last-two-thirds`, `first-third`, `center-third`, `last-third`),
     Fourths(
       `first-fourth`,
       `second-fourth`,

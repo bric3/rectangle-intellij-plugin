@@ -14,10 +14,10 @@
   <rect
           id="screen"
           stroke="#AFB1B3" stroke-width="4"
-          fill="#AFB1B3"
+          fill="none"
           x="2" y="2"
           rx="10"
           width="188" height="124"
   />
-  <path id="next-display" d="m 105,0 35,64 -35,64 H 43 L 78,64 43,0 Z" fill="white"/>
+  <path id="next-display" d="m 105,0 35,64 -35,64 H 43 L 78,64 43,0 Z" fill="#AFB1B3"/>
 </svg>
