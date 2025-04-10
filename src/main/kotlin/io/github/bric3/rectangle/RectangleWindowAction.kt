@@ -20,7 +20,7 @@ enum class RectangleWindowAction {
   `top-left`, `top-right`, `bottom-left`, `bottom-right`,
   `first-third`, `center-third`, `last-third`,
   `first-two-thirds`, `last-two-thirds`,
-  maximize, `almost-maximize`, `maximize-height`, smaller, larger, center, `center-prominently`, restore,
+  maximize, `almost-maximize`, `maximize-height`, smaller, larger, `larger-width`, `smaller-width`, center, `center-prominently`, restore,
   `next-display`, `previous-display`,
   `move-left`, `move-right`, `move-up`, `move-down`,
   `first-fourth`, `second-fourth`, `third-fourth`, `last-fourth`, `first-three-fourths`, `last-three-fourths`,
@@ -69,7 +69,7 @@ enum class RectangleWindowAction {
       `bottom-left-eighth`, `bottom-center-left-eighth`, `bottom-center-right-eighth`, `bottom-right-eighth`
     ),
     Move(`move-left`, `move-right`, `move-up`, `move-down`),
-    General(maximize, `almost-maximize`, `maximize-height`, smaller, larger, center, restore),
+    General(maximize, `almost-maximize`, `maximize-height`, smaller, larger, `smaller-width`, `larger-width`, center, restore),
     Display(`previous-display`, `next-display`),
     Unassigned;
   }

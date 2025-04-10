@@ -14,13 +14,14 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread.BGT
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.DumbAwareAction
 import io.github.bric3.rectangle.RectangleAppService
 import io.github.bric3.rectangle.RectangleWindowAction
 import io.github.bric3.rectangle.actions.RectangleActionUtil.originalText
 
 abstract class RectangleWindowActionsWithInlineActions(
-  private val actionNames: List<RectangleWindowAction>
+  actionNames: List<RectangleWindowAction>
 ) : DumbAwareAction() {
 
   constructor(category: RectangleWindowAction.Category) : this(category.actionNames.toList())
@@ -30,7 +31,11 @@ abstract class RectangleWindowActionsWithInlineActions(
 
     val actionList = actionNames.mapNotNull {
       actionManager.getAction(RectangleAction.actionId(it))?.apply {
-        templatePresentation.putClientProperty(ActionUtil.ALWAYS_VISIBLE_INLINE_ACTION, true)
+        val hasIcon = templatePresentation.icon != null
+        if (!hasIcon) {
+          thisLogger().warn("No icon for, action not shown: $it")
+        }
+        templatePresentation.putClientProperty(ActionUtil.ALWAYS_VISIBLE_INLINE_ACTION, hasIcon)
       }
     }
     templatePresentation.putClientProperty(ActionUtil.INLINE_ACTIONS, actionList)
@@ -39,7 +44,7 @@ abstract class RectangleWindowActionsWithInlineActions(
   override fun getActionUpdateThread() = BGT
 
   override fun update(e: AnActionEvent) {
-    // padding not necessary since the inlin actions are always shown
+    // padding not necessary since the inline actions are always shown
     e.presentation.text = originalText()
     e.presentation.isEnabled = RectangleAppService.getInstance().detectedFlow.value
   }
