@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     # Ref : https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#permissions
+    # Also select https://github.com/{profile or org}/{repo}/settings/actions
+    # (Might be required to perform this org level before toggling: https://github.com/organizations/{org}/settings/actions)
     permissions:
       contents: write # Required to create/modify a release (e.g release upload)
       pull-requests: write # Required to create a comment, or label a pull request
