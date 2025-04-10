@@ -21,6 +21,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.util.text.SemVer
 import io.github.bric3.rectangle.RectangleBundle.message
 import io.github.bric3.rectangle.util.Command
 import io.github.bric3.rectangle.util.MdlsCommand
@@ -42,9 +43,21 @@ import kotlin.time.Duration.Companion.hours
 
 @Service(Service.Level.APP)
 class RectangleAppService(private val cs: CoroutineScope) {
-  private val detectedRectangleVersion = MutableSharedFlow<String?>()
+  private val detectedRectangleVersionFlow = MutableSharedFlow<String?>()
 
-  val detectedFlow: StateFlow<Boolean> = detectedRectangleVersion
+  val detectedVersionFlow: StateFlow<SemVer?> = detectedRectangleVersionFlow
+    .map { v ->
+      // Rectangle version is not semver, so stick-man approach to append a patch number
+      val versionWithPatch = if (v?.count { it == '.' } == 1) {
+        "$v.0"
+      } else {
+        v
+      }
+      SemVer.parseFromText(versionWithPatch)
+    }
+    .stateIn(cs, SharingStarted.Eagerly, null)
+
+  val detectedFlow: StateFlow<Boolean> = detectedVersionFlow
     .map { it != null }
     .stateIn(cs, SharingStarted.Eagerly, false)
 
@@ -56,7 +69,7 @@ class RectangleAppService(private val cs: CoroutineScope) {
           retry { detectRectangleVersion(rectanglePath) }
         }
         if (version != null) {
-          detectedRectangleVersion.emit(version)
+          detectedRectangleVersionFlow.emit(version)
         } else if (!notified) {
           notifyUserOnceIfMissingRectangle()
         }

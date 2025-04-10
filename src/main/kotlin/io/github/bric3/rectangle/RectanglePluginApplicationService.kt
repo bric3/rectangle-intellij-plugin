@@ -18,7 +18,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import fleet.util.cast
+import com.intellij.openapi.util.NlsContexts.NotificationContent
 import icons.RectangleActionsIcons
 import io.github.bric3.rectangle.RectangleBundle.message
 import io.github.bric3.rectangle.util.getAppBundleId
@@ -69,7 +69,7 @@ class RectanglePluginApplicationService(private val pluginAppScope: CoroutineSco
     return CoroutineScope(pluginAppScope.coroutineContext + newJob + context)
   }
 
-  fun notifyUser(message: String, notificationType: NotificationType, customizer: Notification.() -> Unit = {}) {
+  fun notifyUser(@NotificationContent message: String, notificationType: NotificationType, customizer: Notification.() -> Unit = {}) {
     Notifications.Bus.notify(
       Notification(
         NOTIFICATION_GROUP_ID,

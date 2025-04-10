@@ -13,15 +13,26 @@ package io.github.bric3.rectangle
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.util.NlsActions.ActionText
+import com.intellij.util.text.SemVer
 import io.github.bric3.rectangle.DefaultsOp.SettingsKey
 import io.github.bric3.rectangle.DragSnapTweak.IgnoreDragSnapToo
 import io.github.bric3.rectangle.RectangleBundle.message
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 object DragSnapTweak {
+  /**
+   * [Minimum version of Rectangle](https://github.com/rxhanson/Rectangle/releases/tag/v0.85) that supports ignoring apps.
+   *
+   * Note Rectangle versions do not follow semver exactly so this version was
+   * suffixed with the patch number.
+   */
+  private val minRectangleVersionWithIgnoreAppTask = SemVer.parseFromText("0.85.0")
+
   /**
    * Since Rectangle, ignoring an app, actually ignores Rectangle shortcuts when that app is
    * focused. However, dragging and snapping are also disabled. This function suggests the user
@@ -29,23 +40,35 @@ object DragSnapTweak {
    */
   fun suggestEnablingDragSnapWhenAppIgnored() {
     RectanglePluginApplicationService.getInstance().newChildScope().launch {
-      RectangleAppService.getInstance().detectedFlow
-        .filter { it }
+      RectangleAppService.getInstance().detectedVersionFlow
+        .filterNotNull()
         .collectLatest {
-          ignoreIdeInRectangle()
+          ignoreIdeInRectangle(it)
         }
     }
   }
 
-  private suspend fun ignoreIdeInRectangle() {
-    RectanglePluginApplicationService.getInstance().ideBundleId.collectLatest {
+  private suspend fun ignoreIdeInRectangle(rectangleVersion: SemVer, forceNotification: Boolean = false) {
+    RectanglePluginApplicationService.getInstance().ideBundleId.collectLatest { ideBundleIdentifier ->
       val ignoreDragSnapToo = RectangleAppService.getInstance().rectangleDefaults(DefaultsOp.ReadOp(IgnoreDragSnapToo))
-      if (ignoreDragSnapToo.value != false) {
+      if (ignoreDragSnapToo.value != false || forceNotification) {
         RectanglePluginApplicationService.getInstance().notifyUser(
-          message("rectangle.notification.drag-snap-ignored.title"),
+          message("rectangle.notification.drag-snap-ignored.title", ApplicationNamesInfo.getInstance().fullProductName),
           NotificationType.INFORMATION,
         ) {
-          addAction(AllowDragSnapForIgnoredAppsAction(this, it))
+          if (ideBundleIdentifier != null && rectangleVersion >= minRectangleVersionWithIgnoreAppTask) {
+            addAction(AllowDragSnapForIgnoredAppsAction(
+              message("rectangle.notification.ignore-app.and.drag-snap-ignored.suggested-action.enable"),
+              this,
+              alsoIgnoreApp = true,
+              ideBundleIdentifier,
+            ))
+          }
+
+          addAction(AllowDragSnapForIgnoredAppsAction(
+            message("rectangle.notification.drag-snap-ignored.suggested-action.enable"),
+            this,
+          ))
         }
       }
       // TODO Auto ignore ide?
@@ -73,7 +96,7 @@ object DragSnapTweak {
     override val key = "ignoreDragSnapToo"
     override val typeParam = "-int"
 
-    override fun fromString(output: String): Boolean? {
+    override fun fromString(output: String): Boolean {
       return when (output) {
         "0" -> true // default
         "1" -> true
@@ -92,12 +115,14 @@ object DragSnapTweak {
 }
 
 class AllowDragSnapForIgnoredAppsAction(
+  @ActionText actionTitle: String,
   private val notification: Notification,
-  private val ideBundleIdentifier: String?
-) : DumbAwareAction(message("rectangle.notification.drag-snap-ignored.suggested-action.enable")) {
+  private val alsoIgnoreApp: Boolean = false,
+  private val ideBundleIdentifier: String? = null,
+) : DumbAwareAction(actionTitle) {
   override fun actionPerformed(e: AnActionEvent) {
     RectanglePluginApplicationService.getInstance().newChildScope().launch {
-      if (ideBundleIdentifier != null) {
+      if (alsoIgnoreApp && ideBundleIdentifier != null) {
         RectangleAppService.getInstance().runRectangleUrlTask(
           RectangleTask.`ignore-app`,
           mapOf("app-bundle-id" to ideBundleIdentifier)
