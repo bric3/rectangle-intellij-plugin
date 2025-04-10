@@ -48,12 +48,7 @@ class RectanglePluginApplicationService(private val pluginAppScope: CoroutineSco
     }
     
     // In sandboxed IDE, the IDE is extracted in a way that `mdls` cannot find the bundle id
-    emit(
-      when (ideBundleId) {
-        "(null)" -> null
-        else -> ideBundleId
-      }
-    )
+    emit(ideBundleId)
   }
     .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
     .shareIn(pluginAppScope, SharingStarted.Lazily, replay = 1)

@@ -48,6 +48,7 @@ object DragSnapTweak {
     }
   }
 
+  // TODO internal action to test notification
   private suspend fun ignoreIdeInRectangle(rectangleVersion: SemVer, forceNotification: Boolean = false) {
     RectanglePluginApplicationService.getInstance().ideBundleId.collectLatest { ideBundleIdentifier ->
       val ignoreDragSnapToo = RectangleAppService.getInstance().rectangleDefaults(DefaultsOp.ReadOp(IgnoreDragSnapToo))

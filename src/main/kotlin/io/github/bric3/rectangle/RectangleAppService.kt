@@ -29,6 +29,7 @@ import io.github.bric3.rectangle.util.getAppBundleId
 import io.github.bric3.rectangle.util.retry
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -36,6 +37,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.time.Duration.Companion.hours
@@ -102,28 +104,30 @@ class RectangleAppService(private val cs: CoroutineScope) {
     }
   }
 
-  private fun detectRectangle(): Path? {
+  private suspend fun detectRectangle(): Path? {
     val path = if (Files.exists(DEFAULT_INSTALL_LOCATION)) {
       DEFAULT_INSTALL_LOCATION
     } else {
       // find if there's a running Rectangle Process
       // ps aux | grep Rectangle
-      val detectedPath = object : Command<String?>(
-        onProcessExecutionException = {
-          logger.error("Failed to run ps command", it)
-          null
-        },
-        onProcessFailure = {
-          logger.error("Failed to run ps command: $stderr")
-          null
-        },
-        onProcessSuccess = { stdout.trim() }
-      ) {
-        override fun GeneralCommandLine.commandLine() {
-          exePath = "/bin/ps"
-          addParameters("-e", "-o", "command")
-        }
-      }.run()?.lines()?.firstOrNull {
+      val detectedPath = withContext(Dispatchers.IO) {
+        object : Command<String?>(
+          onProcessExecutionException = {
+            logger.error("Failed to run ps command", it)
+            null
+          },
+          onProcessFailure = {
+            logger.error("Failed to run ps command: $stderr")
+            null
+          },
+          onProcessSuccess = { stdout.trim() }
+        ) {
+          override fun GeneralCommandLine.commandLine() {
+            exePath = "/bin/ps"
+            addParameters("-e", "-o", "command")
+          }
+        }.run()
+      }?.lines()?.firstOrNull {
         it.contains("Rectangle.app")
       }?.let {
         it.substringBefore("Rectangle.app", "") + "Rectangle.app"
