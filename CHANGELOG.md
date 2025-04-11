@@ -2,14 +2,16 @@
 
 # Rectangle Actions Plugin Changelog
 
-## [Next]
+## [[Next]]
+
+## [[0.0.5]] - 2025-04-11
 
 ### Fixed
 
 - Missing action key for smaller width and larger width actions.
 
 ## [0.0.4] - 2025-04-10
-  
+
 ### Added
 
 - Auto-add the Rectangle menu to the main menu bar.
@@ -56,7 +58,8 @@
 - Detects when ignored apps also ignore Drag and Snap. Suggest tweaking the default settings.
 - Menu with all actions
 
-[Next]: https://github.com/bric3/rectangle-intellij-plugin/compare/v0.0.4...HEAD
+[[Next]]: https://github.com/bric3/rectangle-intellij-plugin/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/bric3/rectangle-intellij-plugin/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/bric3/rectangle-intellij-plugin/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/bric3/rectangle-intellij-plugin/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/bric3/rectangle-intellij-plugin/compare/v0.0.1...v0.0.2
