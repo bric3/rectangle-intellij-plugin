@@ -4,6 +4,10 @@
 
 ## [Next]
 
+### Fixed
+
+- Missing action key for smaller width and larger width actions.
+
 ## [0.0.4] - 2025-04-10
   
 ### Added
