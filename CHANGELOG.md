@@ -6,6 +6,10 @@
 
 ### Fixed
 
+## [0.0.6] - 2025-05-02
+
+### Fixed
+
 - Properly hide inline actions without icons on hover.
 
 ## [0.0.5] - 2025-04-11
