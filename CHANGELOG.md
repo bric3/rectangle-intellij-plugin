@@ -6,6 +6,12 @@
 
 ### Fixed
 
+- Properly hide inline actions without icons on hover.
+
+## [0.0.5] - 2025-04-11
+
+### Fixed
+
 - Missing action key for smaller width and larger width actions.
 
 ## [0.0.4] - 2025-04-10

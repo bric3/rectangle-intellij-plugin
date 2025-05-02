@@ -31,11 +31,11 @@ abstract class RectangleWindowActionsWithInlineActions(
 
     val actionList = actionNames.mapNotNull {
       actionManager.getAction(RectangleAction.actionId(it))?.apply {
-        val hasIcon = templatePresentation.icon != null
-        if (!hasIcon) {
+        if (templatePresentation.icon == null) {
           thisLogger().warn("No icon for, action not shown: $it")
+          return@mapNotNull null
         }
-        templatePresentation.putClientProperty(ActionUtil.ALWAYS_VISIBLE_INLINE_ACTION, hasIcon)
+        templatePresentation.putClientProperty(ActionUtil.ALWAYS_VISIBLE_INLINE_ACTION, true)
       }
     }
     templatePresentation.putClientProperty(ActionUtil.INLINE_ACTIONS, actionList)
