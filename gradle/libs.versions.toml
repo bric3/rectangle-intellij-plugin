@@ -8,7 +8,7 @@ junit = "4.13.2"
 changelog = "2.2.1"
 intelliJPlatform = "2.6.0"
 kotlin = "2.2.0"
-idea-ext = "1.1.10"
+idea-ext = "1.2"
 yumi-licenser = "2.1.1"
 
 [libraries]
