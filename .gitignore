@@ -8,4 +8,4 @@ build
 /.intellijPlatform/*.lock
 
 # Ignore kotlin compiler files
-/.kotlin/
+.kotlin/
