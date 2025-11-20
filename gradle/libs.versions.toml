@@ -9,7 +9,7 @@ changelog = "2.4.0"
 intelliJPlatform = "2.10.2"
 kotlin = "2.2.21"
 idea-ext = "1.3"
-yumi-licenser = "2.1.1"
+yumi-licenser = "2.2.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
