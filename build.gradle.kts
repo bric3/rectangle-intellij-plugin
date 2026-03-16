@@ -62,7 +62,6 @@ dependencies {
   intellijPlatform {
     create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
 
-    instrumentationTools()
     pluginVerifier()
     zipSigner()
     testFramework(TestFrameworkType.Platform)
