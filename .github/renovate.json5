@@ -1,6 +1,55 @@
+// Options doc https://docs.renovatebot.com/configuration-options/
+// validate with
+// docker run --mount type=bind,source=$(pwd)/.github/renovate.json5,target=/usr/src/app/renovate.json5,readonly -it renovate/renovate renovate-config-validator
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
-  ]
+    "config:recommended",
+    ":approveMajorUpdates",
+    ":semanticCommits",
+    "group:allNonMajor",
+    "schedule:earlyMondays"
+  ],
+  "labels": [
+    "dependency-update"
+  ],
+  // Reduce low-risk update noise and keep majors explicit.
+  // Minor and patch updates are merged directly on the Renovate branch to avoid PR spam.
+  // If tests fail, Renovate will still raise a PR so the failure remains visible.
+  "packageRules": [
+    {
+      "description": "Automatically merge minor and patch-level updates",
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "description": "Automatically merge GitHub Action non-major updates",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
+      "automerge": true,
+      "automergeType": "branch"
+    }
+  ],
+  // Wait a little before adopting a new release to avoid churn from quickly republished versions.
+  "minimumReleaseAge": "3 days",
+  "vulnerabilityAlerts": {
+    "description": "Automatically merge vulnerability fixes",
+    "labels": [
+      "vulnerability-fix"
+    ],
+    "automerge": true
+  },
+  "dependencyDashboard": true,
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 2
 }
