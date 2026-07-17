@@ -12,6 +12,8 @@ yumi-licenser = "2.2.2"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
 gradlePlugin-yumi-licenser = { module = "dev.yumi:yumi-gradle-licenser", version.ref = "yumi-licenser" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
