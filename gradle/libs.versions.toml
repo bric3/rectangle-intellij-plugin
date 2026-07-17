@@ -1,6 +1,5 @@
 [versions]
 # libraries
-jgit = "6.10.1.202505221210-r"
 junit = "4.13.2"
 
 # plugins
@@ -8,7 +7,7 @@ changelog = "2.5.0"
 intelliJPlatform = "2.18.1"
 kotlin = "2.4.10"
 idea-ext = "1.4.1"
-yumi-licenser = "2.2.2"
+yumi-licenser = "4.0.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -16,7 +15,6 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref =
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
 gradlePlugin-yumi-licenser = { module = "dev.yumi:yumi-gradle-licenser", version.ref = "yumi-licenser" }
-jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }

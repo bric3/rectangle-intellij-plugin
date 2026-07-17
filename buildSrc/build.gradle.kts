@@ -22,12 +22,7 @@ repositories {
 }
 
 dependencies {
-  implementation(libs.gradlePlugin.yumi.licenser) {
-    exclude(group = "org.eclipse.jgit", module = "org.eclipse.jgit")
-  }
-  implementation(libs.jgit) {
-    because("Yumi Gradle Licenser 2.2.2 pulls a JGit version affected by CVE-2025-4949.")
-  }
+  implementation(libs.gradlePlugin.yumi.licenser)
 
   // https://github.com/gradle/gradle/issues/15383
   implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
