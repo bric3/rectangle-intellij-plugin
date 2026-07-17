@@ -30,7 +30,7 @@ abstract class RectangleWindowActionsWithInlineActions(
     val actionManager = ActionManager.getInstance()
 
     val actionList = actionNames.mapNotNull {
-      actionManager.getAction(RectangleAction.actionId(it))?.apply {
+      actionManager.getAction(rectangleActionId(it))?.apply {
         if (templatePresentation.icon == null) {
           thisLogger().warn("No icon for, action not shown: $it")
           return@mapNotNull null
@@ -82,6 +82,7 @@ class RectangleFourthsActions : RectangleWindowActionsWithInlineActions(
   RectangleWindowAction.Category.Fourths
 )
 
+@Suppress("ComponentNotRegistered") // rarely used atm
 class RectangleSixthsActions : RectangleWindowActionsWithInlineActions(
   RectangleWindowAction.Category.Sixths
 )

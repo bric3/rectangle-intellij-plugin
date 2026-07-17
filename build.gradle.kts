@@ -11,7 +11,6 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.date
 import org.jetbrains.changelog.markdownToHTML
-import org.jetbrains.gradle.ext.settings
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.models.ProductRelease
@@ -37,8 +36,8 @@ kotlin {
   compilerOptions {
     jvmTarget = JvmTarget.fromTarget("17")
     // Supported version from https://plugins.jetbrains.com/docs/intellij/kotlin.html#kotlin-standard-library
-    apiVersion = KotlinVersion.KOTLIN_2_0
-    languageVersion = KotlinVersion.KOTLIN_2_0
+    apiVersion = KotlinVersion.KOTLIN_2_2
+    languageVersion = KotlinVersion.KOTLIN_2_2
 
     optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
   }
@@ -157,7 +156,8 @@ tasks {
     from("LICENSE")
   }
 
-  val listProductsReleases by registering() {
+  register("listProductsReleases") {
+    description = "Writes available IntelliJ IDEA EAP releases to build/listProductsReleases.txt."
     dependsOn(printProductsReleases)
     val outputF = layout.buildDirectory.file("listProductsReleases.txt").also {
       outputs.file(it)
@@ -189,41 +189,39 @@ tasks {
   updateDaemonJvm {
     languageVersion = JavaLanguageVersion.of(21)
   }
+
+  register<GenerateDarkIconVariant>("patchSVG") {
+    description = "Generates dark icon variants from the light SVG icons."
+    forceDarkSync = true
+  }
 }
 
 idea {
-  module {
-    isDownloadSources = true
-    isDownloadJavadoc = true
-  }
-
-  project?.settings {
-//    taskTriggers {
-//      // Tell IDE to execute task
-//      afterSync(":task")
-//    }
-  }
+  // project?.settings {
+  //   taskTriggers {
+  //     // Tell IDE to execute task
+  //     afterSync(":task")
+  //     }
+  // }
 }
 
-tasks.register<GenerateDarkIconVariant>("patchSVG") {
-  forceDarkSync = true
-}
 abstract class GenerateDarkIconVariant @Inject constructor(project: Project) : DefaultTask() {
 
-  @InputFiles
+  @get:InputFiles
   val svgFiles = project.fileTree(project.file("src/main/resources/icons")) {
     exclude("**/rectangle.svg", "**/base.svg")
     include("**/*.svg")
   }
 
-  @OutputFiles
+  @get:OutputFiles
+  @Suppress("unused")
   val patchedFiles = svgFiles + svgFiles.files.map {
     it.parentFile.resolve(it.name.replace(".svg", "_dark.svg"))
   }.filter {
     it.exists()
   }
 
-  @Input
+  @get:Input
   val forceDarkSync = project.objects.property<Boolean>().convention(false)
 
   // TODO ensure width rules per folder / file
@@ -256,7 +254,7 @@ abstract class GenerateDarkIconVariant @Inject constructor(project: Project) : D
   private fun patchContent(svgContent: String, screenColor: String, windowColor: String): String {
     val fillAttribute = "fill"
     val strokeAttribute = "stroke"
-    val placeholder = "%1\$s"
+    val placeholder = "%1" + "$" + "s"
     val screenPattern = """(?s)<rect.+?id="(?<id>[^"]+?)".*?$placeholder="(?<$placeholder>[^"]+?)""""
     val screenShapeFillRegex = Regex(screenPattern.format(fillAttribute))
     val screenShapeStrokeRegex = Regex(screenPattern.format(strokeAttribute))
@@ -336,7 +334,7 @@ abstract class GenerateDarkIconVariant @Inject constructor(project: Project) : D
       .toList()
       .reversed() // THis will make replacements from last to first to avoid skewing int ranges.
       .forEach {
-        logger.debug("match to be changed : $it")
+        logger.debug("match to be changed : {}", it)
         replace(it.range.first, it.range.last + 1, replacement.second)
       }
   }

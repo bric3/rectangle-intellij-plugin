@@ -13,5 +13,7 @@ package io.github.bric3.rectangle
 @Suppress("EnumEntryName")
 enum class RectangleTask {
   `ignore-app`,
+
+  @Suppress("unused")
   `unignore-app`,
 }

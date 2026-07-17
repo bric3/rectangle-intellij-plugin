@@ -1,7 +1,6 @@
-
-
 [versions]
 # libraries
+jgit = "6.10.1.202505221210-r"
 junit = "4.13.2"
 
 # plugins
@@ -15,10 +14,10 @@ yumi-licenser = "2.2.2"
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 gradlePlugin-yumi-licenser = { module = "dev.yumi:yumi-gradle-licenser", version.ref = "yumi-licenser" }
+jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
 intelliJPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intelliJPlatform" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea-ext" }
-yumi-licenser = { id = "dev.yumi.gradle.licenser", version.ref = "yumi-licenser" }

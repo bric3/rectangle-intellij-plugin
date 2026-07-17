@@ -46,6 +46,7 @@ private suspend fun bundleIdViaSpotlightCommand(appPath: Path) = withContext(Dis
   ).run()
 }
 
+@Suppress("HttpUrlsUsage")
 private suspend fun getAppBundleIdViaInfoPlist(appPath: Path) = withContext(Dispatchers.IO) {
   val path = (appPath.resolve("Info.plist").takeIf { Files.exists(it) }
     ?: appPath.resolve("Contents").resolve("Info.plist").takeIf { Files.exists(it) })
@@ -67,7 +68,7 @@ private suspend fun getAppBundleIdViaInfoPlist(appPath: Path) = withContext(Disp
     ) as? String
 
     bundleId?.takeIf { it.isNotBlank() }
-  } catch (e: Exception) {
+  } catch (_: Exception) {
     null
   }
 }

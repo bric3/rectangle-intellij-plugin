@@ -17,12 +17,23 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.DumbAware
 import io.github.bric3.rectangle.RectangleWindowAction
-import io.github.bric3.rectangle.RectangleWindowAction.*
 import io.github.bric3.rectangle.RectangleWindowAction.`bottom-half`
+import io.github.bric3.rectangle.RectangleWindowAction.`bottom-left`
+import io.github.bric3.rectangle.RectangleWindowAction.`bottom-right`
+import io.github.bric3.rectangle.RectangleWindowAction.`center-half`
+import io.github.bric3.rectangle.RectangleWindowAction.`left-half`
+import io.github.bric3.rectangle.RectangleWindowAction.`right-half`
+import io.github.bric3.rectangle.RectangleWindowAction.`top-half`
+import io.github.bric3.rectangle.RectangleWindowAction.`top-left`
+import io.github.bric3.rectangle.RectangleWindowAction.`top-right`
 import io.github.bric3.rectangle.actions.RectangleActionUtil.patchActionText
 
-abstract class RectangleActionGroup(private val actionNames: List<RectangleWindowAction>) : DefaultActionGroup(), DumbAware {
+abstract class RectangleActionGroup(
+  private val actionNames: List<RectangleWindowAction>
+) : DefaultActionGroup(),
+    DumbAware {
   constructor(vararg actionNames: RectangleWindowAction) : this(actionNames.toList())
+
   override fun getActionUpdateThread() = BGT
 
   override fun update(e: AnActionEvent) {
@@ -33,13 +44,13 @@ abstract class RectangleActionGroup(private val actionNames: List<RectangleWindo
     val actionManager = ActionManager.getInstance()
 
     return actionNames.mapNotNull {
-      actionManager.getAction(RectangleAction.actionId(it))
+      actionManager.getAction(rectangleActionId(it))
     }.toTypedArray()
   }
 }
 
 class RectangleHalvesActionGroup : RectangleActionGroup(
-  `left-half`, `right-half`, `center-half`,`top-half`, `bottom-half`
+  `left-half`, `right-half`, `center-half`, `top-half`, `bottom-half`
 )
 
 class RectangleCornerActionGroup : RectangleActionGroup(

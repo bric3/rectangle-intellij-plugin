@@ -13,7 +13,6 @@ package io.github.bric3.rectangle.actions
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.ActionUpdateThread.EDT
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import icons.RectangleActionsIcons
 import io.github.bric3.rectangle.LastIdeFrameScreenOrientationDetection
@@ -48,7 +47,7 @@ class RectangleAction(private val rectangleWindowAction: RectangleWindowAction) 
   rectangleWindowAction.description(),
   { RectangleActionsIcons.findIcon(rectangleWindowAction.name) }
 ) {
-  val id = actionId(rectangleWindowAction)
+  val id = rectangleActionId(rectangleWindowAction)
 
   init {
     isEnabledInModalContext = true
@@ -64,7 +63,7 @@ class RectangleAction(private val rectangleWindowAction: RectangleWindowAction) 
     }
 
     if (rectangleWindowAction.isOrientable) {
-      val angle = if(LastIdeFrameScreenOrientationDetection.isPortrait()) 90.0 else 0.0
+      val angle = if (LastIdeFrameScreenOrientationDetection.isPortrait()) 90.0 else 0.0
       e.presentation.icon = when (val icon = e.presentation.icon) {
         is RotatedIcon -> icon.apply { degrees = angle }
         else -> icon?.let { RotatedIcon(icon, angle) }
@@ -77,8 +76,9 @@ class RectangleAction(private val rectangleWindowAction: RectangleWindowAction) 
   }
 
   companion object {
-    private val logger = logger<RectangleAction>()
     const val ACTION_PREFIX = "rectangle"
-    fun actionId(rectangleWindowAction: RectangleWindowAction) = "$ACTION_PREFIX.${rectangleWindowAction.toId()}"
   }
 }
+
+fun rectangleActionId(rectangleWindowAction: RectangleWindowAction) =
+  "${RectangleAction.ACTION_PREFIX}.${rectangleWindowAction.toId()}"

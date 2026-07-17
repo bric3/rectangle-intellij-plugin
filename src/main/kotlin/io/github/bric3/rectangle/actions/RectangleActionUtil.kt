@@ -22,7 +22,7 @@ object RectangleActionUtil {
   fun AnAction.patchActionText(e: AnActionEvent) {
     val originalText = originalText() ?: return
 
-    e.presentation.text = when (val place = e.place) {
+    e.presentation.text = when (e.place) {
       ActionPlaces.ACTION_SEARCH -> message("rectangle.action.text-with-prefix", originalText)
       else -> originalText
     }
@@ -30,7 +30,7 @@ object RectangleActionUtil {
 
   fun AnAction.originalText(): @Nls String? {
     val id = ActionManager.getInstance().getId(this) ?: return null
-    return when(this) {
+    return when (this) {
       is ActionGroup -> message("group.$id.text")
       else -> message("action.$id.text")
     }

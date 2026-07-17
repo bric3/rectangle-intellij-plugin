@@ -71,6 +71,8 @@ enum class RectangleWindowAction {
     Move(`move-left`, `move-right`, `move-up`, `move-down`),
     General(maximize, `almost-maximize`, `maximize-height`, smaller, larger, `smaller-width`, `larger-width`, center, restore),
     Display(`previous-display`, `next-display`),
+
+    @Suppress("unused")
     Unassigned;
   }
 }

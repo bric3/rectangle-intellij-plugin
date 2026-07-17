@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 object RectangleWindowActionsRegistraar {
   private val logger = logger<RectangleWindowActionsRegistraar>()
 
+  @Suppress("unused")
   private val ideBaselineVersion = ApplicationInfo.getInstance().build.baselineVersion
 
   fun unregisterActions() {

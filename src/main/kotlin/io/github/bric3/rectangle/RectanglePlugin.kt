@@ -20,12 +20,4 @@ object RectanglePlugin {
   val logger = thisLogger()
   const val PLUGIN_ID_STR = "io.github.bric3.rectangle"
   val PLUGIN_ID = PluginId.getId(PLUGIN_ID_STR)
-
-  /**
-   * Generate an id with the specified [postfix].
-   * The generated id is in the format of `<PLUGIN_ID>.<postfix>`.
-   */
-  fun generateId(postfix: String): String {
-    return "$PLUGIN_ID.$postfix"
-  }
 }
