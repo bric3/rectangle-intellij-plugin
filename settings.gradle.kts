@@ -11,6 +11,8 @@
 rootProject.name = "rectangle-intellij-plugin"
 
 pluginManagement {
+  includeBuild("build-logic")
+
   repositories {
     gradlePluginPortal()
     mavenCentral()

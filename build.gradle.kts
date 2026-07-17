@@ -23,7 +23,7 @@ plugins {
   alias(libs.plugins.intelliJPlatform)
   alias(libs.plugins.changelog)
   alias(libs.plugins.idea.ext)
-  id("license-management")
+  id("rectangle.license-management")
 }
 
 group = providers.gradleProperty("pluginGroup").get()
