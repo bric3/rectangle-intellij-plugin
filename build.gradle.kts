@@ -37,8 +37,8 @@ kotlin {
   compilerOptions {
     jvmTarget = JvmTarget.fromTarget("17")
     // Supported version from https://plugins.jetbrains.com/docs/intellij/kotlin.html#kotlin-standard-library
-    apiVersion = KotlinVersion.KOTLIN_1_9
-    languageVersion = KotlinVersion.KOTLIN_1_9
+    apiVersion = KotlinVersion.KOTLIN_2_0
+    languageVersion = KotlinVersion.KOTLIN_2_0
 
     optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
   }
