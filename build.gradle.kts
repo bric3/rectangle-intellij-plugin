@@ -60,7 +60,7 @@ dependencies {
 
   // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
   intellijPlatform {
-    create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
+    intellijIdea(providers.gradleProperty("platformVersion"))
 
     pluginVerifier()
     zipSigner()
@@ -173,7 +173,7 @@ tasks {
   // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-faq.html#how-to-check-the-latest-available-eap-release
   printProductsReleases {
     channels = listOf(ProductRelease.Channel.EAP)
-    types = listOf(IntelliJPlatformType.IntellijIdeaCommunity)
+    types = listOf(IntelliJPlatformType.IntellijIdea)
     untilBuild = provider { null }
 
     doLast {

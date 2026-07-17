@@ -10,8 +10,6 @@
 
 package io.github.bric3.rectangle
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.extensions.PluginId
 
@@ -22,9 +20,6 @@ object RectanglePlugin {
   val logger = thisLogger()
   const val PLUGIN_ID_STR = "io.github.bric3.rectangle"
   val PLUGIN_ID = PluginId.getId(PLUGIN_ID_STR)
-  private val descriptor: IdeaPluginDescriptor = PluginManagerCore.getPlugin(PLUGIN_ID)!!
-  val name: String by lazy { descriptor.name }
-  val version: String by lazy { descriptor.version }
 
   /**
    * Generate an id with the specified [postfix].
