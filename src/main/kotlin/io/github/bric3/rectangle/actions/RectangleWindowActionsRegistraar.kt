@@ -12,15 +12,10 @@ package io.github.bric3.rectangle.actions
 
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.Anchor
-import com.intellij.openapi.actionSystem.Constraints
-import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.impl.ActionManagerImpl
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.ui.NewUI
 import io.github.bric3.rectangle.RectangleAppService
 import io.github.bric3.rectangle.RectanglePluginApplicationService
 import io.github.bric3.rectangle.RectangleBundle.message
@@ -31,12 +26,9 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 object RectangleWindowActionsRegistraar {
-  private const val RECTANGLE_TITLE_BAR_ACTION_ID = "rectangle.ShowRectangleWindowActions"
-  private const val MAIN_TOOLBAR_RIGHT_GROUP_ID = "MainToolbarRight"
-  private const val SEARCH_EVERYWHERE_ACTION_ID = "SearchEverywhere"
-
   private val logger = logger<RectangleWindowActionsRegistraar>()
 
+  @Suppress("unused")
   private val ideBaselineVersion = ApplicationInfo.getInstance().build.baselineVersion
 
   fun unregisterActions() {
@@ -69,27 +61,7 @@ object RectangleWindowActionsRegistraar {
               logger.debug { "Registering action ${action.id}" }
               actionManager.registerAction(action.id, action, RectanglePlugin.PLUGIN_ID)
             }
-            registerActionInTitleBar()
           }
       }
-  }
-
-  // TODO explore if we can use the new UI API to add a global action to the title bar ?
-  private fun registerActionInTitleBar() {
-    if (!NewUI.isEnabled()) return
-
-    try {
-      val targetGroupId = MAIN_TOOLBAR_RIGHT_GROUP_ID
-      val constraints = Constraints(Anchor.BEFORE, SEARCH_EVERYWHERE_ACTION_ID)
-
-      val actionManager = ActionManager.getInstance() as? ActionManagerImpl ?: return
-      val group = actionManager.getAction(targetGroupId) as? DefaultActionGroup ?: return
-      val action = actionManager.getAction(RECTANGLE_TITLE_BAR_ACTION_ID) ?: return
-      if (!group.containsAction(action)) {
-        actionManager.addToGroup(group, action, constraints)
-      }
-    } catch (e: Throwable) {
-      logger.warn(e)
-    }
   }
 }

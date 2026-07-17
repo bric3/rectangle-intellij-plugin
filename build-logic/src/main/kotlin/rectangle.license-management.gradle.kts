@@ -8,12 +8,15 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import rectangle.yumi.PropertiesStyleHeaderComment
+
 plugins {
   id("dev.yumi.gradle.licenser")
 }
 
 license {
   rule(rootProject.file("HEADER"))
+  headerCommentManager.register(PropertiesStyleHeaderComment, "properties")
 
   include(
     "**/*.java",

@@ -6,6 +6,8 @@
 
 ### Fixed
 
+- Support for IntelliJ Platform 2026.2 IDEs.
+
 ## [0.0.6] - 2025-05-02
 
 ### Fixed

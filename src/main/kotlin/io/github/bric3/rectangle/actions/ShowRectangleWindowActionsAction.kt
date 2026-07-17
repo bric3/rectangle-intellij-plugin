@@ -18,10 +18,10 @@ import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.JBPopupFactory.ActionSelectionAid.SPEEDSEARCH
 import com.intellij.openapi.wm.IdeFocusManager
+import com.intellij.ui.components.panels.VerticalLayout
 import icons.RectangleActionsIcons
 import io.github.bric3.rectangle.RectangleAppService
 import io.github.bric3.rectangle.actions.RectangleActionUtil.patchActionText
-import org.jdesktop.swingx.VerticalLayout
 import javax.swing.JPanel
 
 class ShowRectangleWindowActionsAction : DumbAwareAction() {
@@ -39,7 +39,7 @@ class ShowRectangleWindowActionsAction : DumbAwareAction() {
     // popupWithCustomContent(e)
   }
 
-  @Suppress("UnstableApiUsage")
+  @Suppress("UnstableApiUsage", "unused") // experimental
   private fun popupWithCustomContent(e: AnActionEvent) {
     val frame = IdeFocusManager.getGlobalInstance().lastFocusedFrame ?: return
 

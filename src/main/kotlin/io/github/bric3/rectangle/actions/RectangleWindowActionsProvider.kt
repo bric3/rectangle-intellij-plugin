@@ -39,5 +39,5 @@ object RectangleWindowActionsProvider {
     return RectangleWindowAction.entries.map { RectangleAction(it) }
   }
 
-  val actionIds = RectangleWindowAction.entries.map { RectangleAction.actionId(it) }
+  val actionIds = RectangleWindowAction.entries.map { rectangleActionId(it) }
 }

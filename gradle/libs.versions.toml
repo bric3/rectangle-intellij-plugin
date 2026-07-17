@@ -1,18 +1,18 @@
-
-
 [versions]
 # libraries
 junit = "4.13.2"
 
 # plugins
 changelog = "2.5.0"
-intelliJPlatform = "2.16.0"
-kotlin = "2.3.21"
+intelliJPlatform = "2.18.1"
+kotlin = "2.4.10"
 idea-ext = "1.4.1"
-yumi-licenser = "3.0.1"
+yumi-licenser = "4.0.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
 gradlePlugin-yumi-licenser = { module = "dev.yumi:yumi-gradle-licenser", version.ref = "yumi-licenser" }
 
@@ -21,4 +21,3 @@ changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
 intelliJPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intelliJPlatform" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea-ext" }
-yumi-licenser = { id = "dev.yumi.gradle.licenser", version.ref = "yumi-licenser" }

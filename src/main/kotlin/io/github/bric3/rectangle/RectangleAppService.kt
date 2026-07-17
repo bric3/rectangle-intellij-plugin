@@ -94,7 +94,7 @@ class RectangleAppService(private val cs: CoroutineScope) {
       )
       BrewRectangleInstaller.brewRectangleInstallAction?.let { delegate ->
         addAction(DumbAwareAction.create(delegate.templateText) {
-          ActionUtil.performActionDumbAwareWithCallbacks(
+          ActionUtil.performAction(
             delegate,
             it,
           )
@@ -207,7 +207,7 @@ class RectangleAppService(private val cs: CoroutineScope) {
         append(executeType)
         append("?name=")
         append(name)
-        args.forEach { k, v ->
+        args.forEach { (k, v) ->
           append("&")
           append(k)
           append("=")
@@ -250,4 +250,3 @@ class RectangleAppService(private val cs: CoroutineScope) {
     fun getInstance() = ApplicationManager.getApplication().service<RectangleAppService>()
   }
 }
-
