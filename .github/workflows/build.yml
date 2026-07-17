@@ -82,9 +82,8 @@ jobs:
 
   pluginVerifier:
     name: Plugin Verifier
-    needs: gradleValidation
+    needs: build
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v6
@@ -97,26 +96,12 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
-
-      - name: Export Properties
-        id: properties
-        shell: bash
-        run: |
-          echo "pluginVerifierHomeDir=~/.pluginVerifier" >> $GITHUB_OUTPUT
-
-      - name: List Products Releases
-        run: ./gradlew listProductsReleases
-
-      # Cache Plugin Verifier IDEs
-      - name: Setup Plugin Verifier IDEs Cache
-        uses: actions/cache@v5
         with:
-          path: ${{ steps.properties.outputs.pluginVerifierHomeDir }}/ides
-          key: plugin-verifier-${{ hashFiles('build/listProductsReleases.txt') }}
+          cache-read-only: true
 
       # Run Verify Plugin task and IntelliJ Plugin Verifier tool
       - name: Run Plugin Verification tasks
-        run: ./gradlew :verifyPlugin -Pplugin.verifier.home.dir=${{ steps.properties.outputs.pluginVerifierHomeDir }}
+        run: ./gradlew :verifyPlugin
 
       # Collect Plugin Verifier Result
       - name: Collect Plugin Verifier Result
@@ -131,7 +116,7 @@ jobs:
   releaseDraft:
     name: Release Draft
     if: github.event_name != 'pull_request'
-    needs: [ build ]
+    needs: [ build, pluginVerifier ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
